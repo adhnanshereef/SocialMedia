@@ -146,10 +146,11 @@ REST_FRAMEWORK = {
 }
 
 # CORS Headers
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:4200",
-    "https://inflow.adhnan.me",
-]
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:4200",
+#     "https://inflow.adhnan.me",
+# ]
+CORS_ALLOW_ALL_ORIGINS = True
 
 
 # Simple JWT
