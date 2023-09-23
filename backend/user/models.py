@@ -27,7 +27,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     followers = models.ManyToManyField(
         'self', related_name='folower', blank=True, symmetrical=False)
     dateofbirth = models.DateField(blank=True, null=True)
-    joined = models.DateTimeField(auto_now_add=True)
+    joined = models.DateField(auto_now_add=True)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 

@@ -157,7 +157,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 SECRET_KEY = 'iZrE/mZHYu/+vtex9+GgrJ1a3/5Kr4UazWk9nvovOrg='
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=10),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=90),
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,

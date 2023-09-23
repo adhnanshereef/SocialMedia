@@ -1,5 +1,16 @@
+export interface User {
+  username: string;
+  name: string;
+  email: string;
+  bio: string;
+  profile_pic: string;
+  dateofbirth: string;
+  joined: string;
+  followers: Array<any>;
+  following: Array<any>;
+}
+
 export interface TokenUser {
-  id: number;
   username: string;
   name: string;
   profile: string;

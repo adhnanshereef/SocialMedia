@@ -20,6 +20,7 @@ import { NotFoundComponent } from './components/not-found/not-found.component';
 
 // Interceptor
 import { AuthInterceptor } from './auth.interceptor';
+import { EditUserComponent } from './components/auth/edit-user/edit-user.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { AuthInterceptor } from './auth.interceptor';
     LoginComponent,
     SignupComponent,
     NotFoundComponent,
+    EditUserComponent,
   ],
   imports: [
     BrowserModule,
