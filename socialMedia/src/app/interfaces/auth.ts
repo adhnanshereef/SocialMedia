@@ -10,6 +10,16 @@ export interface User {
   following: Array<any>;
 }
 
+
+export interface EditUser{
+  username: string;
+  name: string;
+  email: string;
+  bio: string;
+  profile_pic: string;
+  dateofbirth: string;
+}
+
 export interface TokenUser {
   username: string;
   name: string;

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
-import { TokenUser, Tokens, User } from '../interfaces/auth';
+import { EditUser, TokenUser, Tokens, User } from '../interfaces/auth';
 import { Observable, from } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { BACKEND_URL } from '../config';
@@ -151,18 +151,51 @@ export class AuthService {
     );
   }
 
-  refreshToken(){
+  refreshToken() {
     if (this.isAuthenticated()) {
-      const response = this.http.post(`${BACKEND_URL}/auth/token/refresh/`, { refresh: this.cookieService.get('refresh_token') }) as Observable<Tokens>;
+      const response = this.http.post(`${BACKEND_URL}/auth/token/refresh/`, {
+        refresh: this.cookieService.get('refresh_token'),
+      }) as Observable<Tokens>;
       response.subscribe({
-        next: (tokens:Tokens) => {
+        next: (tokens: Tokens) => {
           this.setTokens(tokens);
+        },
+        error: (error) => {
+          console.log(error);
+        },
+      });
+    }
+  }
+
+  editUser(user: EditUser) {
+    if (this.isAuthenticated()) {
+      const formData = new FormData();
+      formData.append('username', user.username);
+      formData.append('name', user.name);
+      formData.append('email', user.email);
+      formData.append('bio', user.bio);
+      formData.append('dateofbirth', user.dateofbirth);
+
+      if (user.profile_pic) {
+        formData.append('profile_pic', user.profile_pic);
+      }
+
+      const response = this.http.put(
+        `${BACKEND_URL}/auth/edit/`,
+        formData
+      ) as Observable<User>;
+
+      response.subscribe({
+        next: (data) => {
+          this.refreshToken();
           this.router.navigateByUrl('');
         },
         error: (error) => {
           console.log(error);
         },
       });
+    } else {
+      this.router.navigateByUrl('/auth/login');
     }
   }
 }

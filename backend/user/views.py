@@ -1,5 +1,6 @@
 """ Contains Signup, Edit and Delete User """
 from django.contrib.auth import authenticate
+from django.core.files.storage import default_storage
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -52,22 +53,21 @@ def signup(request):
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def edit(request):
-    # Get username and password from the request data
+    # Get user data from the request data
     username = request.data.get('username')
     email = request.data.get('email')
     name = request.data.get('name')
     bio = request.data.get('bio')
-    dob = request.data.get('dob')
+    dob = request.data.get('dateofbirth')
 
-    #  Check if a user with the provided username or email already exists.
-    existing_username_user = User.objects.filter(username=username).first()
-    existing_email_user = User.objects.filter(email=email).first()
+    # Get the profile picture file from the request
+    profile_pic = request.FILES.get('profile_pic')
 
-    if existing_username_user or existing_email_user:
-        return Response({'error': 'User with this username or email already exists.'}, status=status.HTTP_400_BAD_REQUEST)
+    # Get the old profile picture path before updating
+    old_profile_pic = request.user.profile_pic.path if request.user.profile_pic else None
 
-    # If no user exists with the provided username or email, create a new user.
-    user = User.objects.get(username=request.user.username)
+    # If no user exists with the provided username or email, update the user's data.
+    user = request.user
     if username:
         user.username = username
     if email:
@@ -78,6 +78,12 @@ def edit(request):
         user.bio = bio
     if dob:
         user.dateofbirth = dob
+    if profile_pic:
+        user.profile_pic = profile_pic
+
+    if old_profile_pic and not old_profile_pic.endswith('user.svg') and profile_pic :
+        default_storage.delete(old_profile_pic)
+
     user.save()
 
     return Response({'success': 'User Updated'}, status=status.HTTP_200_OK)
