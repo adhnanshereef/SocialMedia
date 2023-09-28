@@ -170,11 +170,21 @@ export class AuthService {
   editUser(user: EditUser) {
     if (this.isAuthenticated()) {
       const formData = new FormData();
-      formData.append('username', user.username);
-      formData.append('name', user.name);
-      formData.append('email', user.email);
-      formData.append('bio', user.bio);
-      formData.append('dateofbirth', user.dateofbirth);
+      if (user.username) {
+        formData.append('username', user.username);
+      }
+      if (user.name) {
+        formData.append('name', user.name);
+      }
+      if (user.email) {
+        formData.append('email', user.email);
+      }
+      if (user.bio) {
+        formData.append('bio', user.bio);
+      }
+      if (user.dateofbirth) {
+        formData.append('dateofbirth', user.dateofbirth);
+      }
 
       if (user.profile_pic) {
         formData.append('profile_pic', user.profile_pic);

@@ -1,32 +1,51 @@
 <div *ngIf="user">
     <form [formGroup]="userForm" (submit)="onSubmit()" enctype="multipart/form-data">
         <div>
-            <label for="username">Username:</label>
-            <input type="text" id="username" formControlName="username" />
+            <mat-form-field>
+                <mat-label>Username:</mat-label>
+                <input matInput type="text" id="username" formControlName="username" />
+            </mat-form-field>
         </div>
         <div>
-            <label for="name">Name:</label>
-            <input type="text" id="name" formControlName="name" />
+            <mat-form-field>
+                <mat-label>Name:</mat-label>
+                <input matInput type="text" id="name" formControlName="name" />
+            </mat-form-field>
         </div>
         <div>
-            <label for="email">Email:</label>
-            <input type="email" id="email" formControlName="email" />
+            <mat-form-field>
+                <mat-label>Email:</mat-label>
+                <input matInput type="email" id="email" formControlName="email" />
+            </mat-form-field>
         </div>
         <div>
-            <label for="bio">Bio:</label>
-            <textarea id="bio" formControlName="bio"></textarea>
+            <mat-form-field>
+                <mat-label>Bio:</mat-label>
+                <textarea matInput id="bio" formControlName="bio"></textarea>
+            </mat-form-field>
+        </div>
+        <div class="file-input-container">
+            <div class="file-input-preview" *ngIf="profilePicPreview">
+                <img [src]="profilePicPreview" alt="Profile Picture Preview" />
+            </div>
+            <label for="profile_pic" class="file-input-label">Choose Profile Picture</label>
+            <input type="file" id="profile_pic" (change)="onProfilePicChange($event)" accept="image/*" />
         </div>
         <div>
-            <label for="profile_pic">Profile Picture:</label>
-            <input type="file" id="profile_pic" (change)="onProfilePicChange($event)"
-                accept="image/*" />
-            <img *ngIf="profilePicPreview" [src]="profilePicPreview" width="100" alt="Profile Picture Preview" />
+            <!-- <mat-form-field>
+                <mat-label>Date of Birth:</mat-label>
+                <input matInput [matDatepicker]="picker" type="date" id="dateofbirth" formControlName="dateofbirth" />
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field> -->
+            <mat-form-field>
+                <mat-label>Date of Birth:</mat-label>
+                <input matInput [matDatepicker]="picker" type="text" formControlName="dateofbirth" id="dateofbirth">
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker  #picker></mat-datepicker>
+            </mat-form-field>
         </div>
-        <div>
-            <label for="dateofbirth">Date of Birth:</label>
-            <input type="date" id="dateofbirth" formControlName="dateofbirth" />
-        </div>
-        <button type="submit">Save</button>
+        <button mat-raised-button color="primary" type="submit">Save</button>
     </form>
 </div>
 <div *ngIf="!user">Loading........</div>

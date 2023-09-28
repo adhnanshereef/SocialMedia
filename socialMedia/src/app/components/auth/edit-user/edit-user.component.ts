@@ -43,6 +43,7 @@ export class EditUserComponent implements OnInit {
       },
     });
   }
+  
 
   onProfilePicChange(event: any) {
     // Handle profile picture change
@@ -60,10 +61,39 @@ export class EditUserComponent implements OnInit {
     }
   }
 
+
   onSubmit() {
-    // Call editUser from AuthService with the user data and profile picture file
-    this.authService.editUser(
-      this.userForm.value
-    );
+    // Get the user data from the form
+    const userData = this.userForm.value;
+  
+    // Format the date field before sending it to the server
+    userData.dateofbirth = this.formatDate(userData.dateofbirth);
+    
+    // Call editUser from AuthService with the user data
+    this.authService.editUser(userData);
   }
+  
+  formatDate(date: string): string | null {
+    // Return null if the date is not set
+    if (!date) {
+      return null;
+    }
+    
+    // Attempt to parse the input date string into a JavaScript Date object
+    const parsedDate = new Date(date);
+  
+    // Check if the parsedDate is a valid Date object
+    if (isNaN(parsedDate.getTime())) {
+      // Return null if the date is invalid
+      return null;
+    }
+  
+    // Extract year, month, and day components from the Date object
+    const year = parsedDate.getFullYear();
+    const month = (parsedDate.getMonth() + 1).toString().padStart(2, '0'); // Month is zero-based
+    const day = parsedDate.getDate().toString().padStart(2, '0');
+  
+    // Return the formatted date as "yyyy-MM-dd"
+    return `${year}-${month}-${day}`;
+  }  
 }

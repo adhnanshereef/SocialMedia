@@ -1,1 +1,19 @@
-<router-outlet></router-outlet>
+<mat-toolbar class="navbar" color="primary">
+
+    <mat-toolbar-row>
+        <a routerLink="/">
+            <span>Social Media</span>
+        </a>
+        <span class="nav-bar-spacer"></span>
+        <button (click)="logout()">
+            <mat-icon class="nav-bar-icon" aria-hidden="false" aria-label="Logout icon">logout</mat-icon>
+        </button>
+        <a routerLink="/auth/edit">
+            <mat-icon class="nav-bar-icon" aria-hidden="false" aria-label="Edit icon">edit</mat-icon>
+        </a>
+    </mat-toolbar-row>
+</mat-toolbar>
+
+<main>
+    <router-outlet></router-outlet>
+</main>

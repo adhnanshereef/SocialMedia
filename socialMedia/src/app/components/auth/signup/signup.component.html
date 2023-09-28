@@ -1,23 +1,31 @@
 <h2>SignUp</h2>
 <form [formGroup]="signupForm" (ngSubmit)="onSubmit()" >
-    <label>
-        Username:
-        <input type="text" formControlName="username">
-    </label>
+    <div>
+        <mat-form-field>
+            <mat-label>Username:</mat-label>
+            <input matInput type="text" formControlName="username" required>
+        </mat-form-field>
+    </div>
     <br>
-    <label>
-        Name:
-        <input type="text" formControlName="name">
-    </label>
+    <div>
+        <mat-form-field>
+            <mat-label>Name:</mat-label>
+            <input matInput type="text" formControlName="name" required>
+        </mat-form-field>
+    </div>
     <br>
-    <label>
-        Email:
-        <input type="email" formControlName="email">
-    </label>
+    <div>
+        <mat-form-field>
+            <mat-label>Email:</mat-label>
+            <input matInput type="email" formControlName="email" required>
+        </mat-form-field>
+    </div>
     <br>
-    <label>
-        Password:
-        <input type="password" formControlName="password">
-    </label>
-    <button type="submit" [disabled]="signupForm.invalid">Signup</button>
+    <div>
+        <mat-form-field>
+            <mat-label>Password:</mat-label>
+            <input matInput type="password" formControlName="password" required>
+        </mat-form-field>
+    </div>
+    <button mat-raised-button color="primary" type="submit" [disabled]="signupForm.invalid">Signup</button>
 </form>

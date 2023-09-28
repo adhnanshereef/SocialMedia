@@ -5,8 +5,8 @@
 <h3>{{Tuser.profile}}</h3>
 <!-- <img src="{{backend_url}}{{Tuser.profile}}" alt="gg" width="100px" > -->
 
-<button type="button" (click)="logout()" >Logout</button>
-<button type="button" (click)="deleteAccount()" >Delete</button>
+<button type="button" (click)="logout()">Logout</button>
+<button type="button" (click)="deleteAccount()">Delete</button>
 
 
 <h2>User from server</h2>
@@ -14,8 +14,7 @@
 <h3>{{user.name}}</h3>
 <h3>{{user.bio}}</h3>
 <h3>{{user.email}}</h3>
-<h3>{{user.joined}}</h3>
+<h3>{{user.dateofbirth}}</h3>
 <h3>{{user.profile_pic}}</h3>
 
-<img *ngIf="user.profile_pic" src="{{backend_url}}{{user.profile_pic}}" alt="gg" width="100px" >
-
+<img *ngIf="user.profile_pic" src="{{backend_url}}{{user.profile_pic}}" alt="gg" width="100px">

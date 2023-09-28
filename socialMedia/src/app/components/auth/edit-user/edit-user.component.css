@@ -1,0 +1,50 @@
+mat-form-field {
+  width: 100%;
+}
+button {
+  width: 100%;
+}
+
+.file-input-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+.file-input-label {
+  display: inline-block;
+  padding: 16px 100px;
+  background-color: #7700ff;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 8px;
+}
+
+.file-input-label:hover {
+  background-color: #5e00d9;
+}
+
+input[type="file"] {
+  top: 0;
+  left: 0;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.file-input-preview {
+  width: 200px;
+  height: auto;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 16px 0;
+  padding:  10px;
+}
+
+.file-input-preview img {
+  width: 100%;
+  height: auto;
+}
