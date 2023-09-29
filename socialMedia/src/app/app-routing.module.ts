@@ -6,12 +6,14 @@ import { LoginComponent } from './components/auth/login/login.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { authGuard } from './auth.guard';
 import { EditUserComponent } from './components/auth/edit-user/edit-user.component';
+import { ProfileComponent } from './components/profile/profile.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [authGuard] },
   { path: 'auth/signup', component: SignupComponent },
   { path: 'auth/login', component: LoginComponent },
   { path: 'auth/edit', component: EditUserComponent, canActivate: [authGuard] },
+  { path: ':username', component: ProfileComponent },
   { path: '**', component: NotFoundComponent }
 ];
 
