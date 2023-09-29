@@ -12,14 +12,14 @@
             <mat-card-content>
                 <p>{{user.bio}}</p>
                 <div class="stats">
-                    <div class="stat">
+                    <div (click)="showFollowers()" class="stat">
                         <mat-icon>people_alt</mat-icon>
-                        <span>{{user.followers.length}}</span>
+                        <span>{{user.followers}}</span>
                         <span>Followers</span>
                     </div>
-                    <div class="stat">
+                    <div (click)="showFollowing()" class="stat">
                         <mat-icon>person_add_alt_1</mat-icon>
-                        <span>{{user.following.length}}</span>
+                        <span>{{user.following}}</span>
                         <span>Following</span>
                     </div>
                     <div class="stat">
@@ -37,4 +37,33 @@
 </div>
 <div class="not-found" *ngIf="!exist">
     <p>User does not exist.</p>
+</div>
+
+<div *ngIf="show == 'followers'">
+    <h3>Followers</h3>
+    <div *ngIf="followers">
+        <ul *ngFor="let follower of followers">
+            <li>{{follower.username}}</li>
+            <li>{{follower.name}}</li>
+            <img src="{{backendUrl}}{{follower.profile_pic}}" alt="">
+        </ul>
+    </div>
+    <div class="loading" *ngIf="!followers">
+        <div class="loader"></div>
+    </div>
+    <p *ngIf="followers?.length == 0">No followings</p>
+</div>
+<div *ngIf="show == 'following'">
+    <h3>Following</h3>
+    <div *ngIf="following">
+        <ul *ngFor="let following of following">
+            <li>{{following.username}}</li>
+            <li>{{following.name}}</li>
+            <img width="100px" src="{{backendUrl}}{{following.profile_pic}}" alt="">
+        </ul>
+    </div>
+    <div class="loading" *ngIf="!following">
+        <div class="loader"></div>
+    </div>
+    <p *ngIf="following?.length == 0">No followings</p>
 </div>

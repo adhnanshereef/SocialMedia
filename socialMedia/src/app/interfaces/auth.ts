@@ -6,8 +6,8 @@ export interface User {
   profile_pic: string;
   dateofbirth: string;
   joined: string;
-  followers: Array<any>;
-  following: Array<any>;
+  followers: number;
+  following: number;
 }
 
 
