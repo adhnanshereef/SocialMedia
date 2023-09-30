@@ -35,6 +35,7 @@ import { DatePipe } from './date.pipe';
 
 // Interceptor
 import { AuthInterceptor } from './auth.interceptor';
+import { PopupComponent } from './components/popup/popup.component';
 
 @NgModule({
   declarations: [
@@ -46,6 +47,7 @@ import { AuthInterceptor } from './auth.interceptor';
     EditUserComponent,
     ProfileComponent,
     DatePipe,
+    PopupComponent,
   ],
   imports: [
     BrowserModule,

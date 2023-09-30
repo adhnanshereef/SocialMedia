@@ -130,4 +130,7 @@ export class ProfileComponent implements OnInit {
       }
     }
   }
+  close() {
+    this.show = 'none';
+  }
 }

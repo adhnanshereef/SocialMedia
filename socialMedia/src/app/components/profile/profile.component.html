@@ -8,7 +8,8 @@
                 </div>
                 <mat-card-title>{{user.name}}</mat-card-title>
                 <mat-card-subtitle>@{{user.username}}</mat-card-subtitle>
-                <button mat-raised-button (click)="follow()"><span *ngIf="followed">Unfollow</span><span *ngIf="!followed">Follow</span></button>
+                <button mat-raised-button (click)="follow()"><span *ngIf="followed">Unfollow</span><span
+                        *ngIf="!followed">Follow</span></button>
             </mat-card-header>
             <mat-card-content>
                 <p>{{user.bio}}</p>
@@ -41,30 +42,41 @@
 </div>
 
 <div *ngIf="show == 'followers'">
-    <h3>Followers</h3>
-    <div *ngIf="followers">
-        <ul *ngFor="let follower of followers">
-            <li>{{follower.username}}</li>
-            <li>{{follower.name}}</li>
-            <img src="{{backendUrl}}{{follower.profile_pic}}" alt="">
-        </ul>
-    </div>
-    <div class="loading" *ngIf="!followers">
-        <div class="loader"></div>
-    </div>
-    <p *ngIf="followers?.length == 0">No followings</p>
+    <app-popup title="Followers" (close)="close()">
+        <div *ngIf="followers">
+            <div class="follower-card" *ngFor="let follower of followers">
+                <div class="follower-info">
+                    <div class="username">{{follower.username}}</div>
+                    <div class="name">{{follower.name}}</div>
+                </div>
+                <div class="profile-pic">
+                    <img width="100px" [src]="backendUrl + follower.profile_pic" alt="">
+                </div>
+            </div>
+        </div>
+        <div class="loading" *ngIf="!followers">
+            <div class="loader"></div>
+        </div>
+        <p class="no-followers" *ngIf="followers && followers.length === 0">No followers</p>
+    </app-popup>
 </div>
+
 <div *ngIf="show == 'following'">
-    <h3>Following</h3>
-    <div *ngIf="following">
-        <ul *ngFor="let following of following">
-            <li>{{following.username}}</li>
-            <li>{{following.name}}</li>
-            <img width="100px" src="{{backendUrl}}{{following.profile_pic}}" alt="">
-        </ul>
-    </div>
-    <div class="loading" *ngIf="!following">
-        <div class="loader"></div>
-    </div>
-    <p *ngIf="following?.length == 0">No followings</p>
+    <app-popup title="Following" (close)="close()">
+        <div *ngIf="following">
+            <div class="following-card" *ngFor="let followingItem of following">
+                <div class="following-info">
+                    <div class="username">{{followingItem.username}}</div>
+                    <div class="name">{{followingItem.name}}</div>
+                </div>
+                <div class="profile-pic">
+                    <img width="100px" [src]="backendUrl + followingItem.profile_pic" alt="">
+                </div>
+            </div>
+        </div>
+        <div class="loading" *ngIf="!following">
+            <div class="loader"></div>
+        </div>
+        <p class="no-followers" *ngIf="following && following.length === 0">No followings</p>
+    </app-popup>
 </div>

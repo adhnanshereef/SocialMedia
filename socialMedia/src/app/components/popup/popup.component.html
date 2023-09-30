@@ -1,0 +1,11 @@
+<div class="container">
+    <div class="popup">
+        <div class="popup__header">
+            <h2 class="popup__title">{{title}}</h2>
+            <button class="popup__close" (click)="onClose()"><mat-icon>close</mat-icon></button>
+        </div>
+        <div class="popup__body">
+            <ng-content></ng-content>
+        </div>
+    </div>
+</div>
