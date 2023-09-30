@@ -8,3 +8,8 @@ export interface FollowersFollowings{
     followers: FollowUser[];
     following: FollowUser[];
 }
+
+export interface FollowReturn{
+    do: string;
+    user: FollowUser;
+}

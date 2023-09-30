@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { BACKEND_URL } from 'src/app/config';
 import { User } from 'src/app/interfaces/auth';
 import { FollowUser } from 'src/app/interfaces/profile';
+import { AuthService } from 'src/app/services/auth.service';
 import { ProfileService } from 'src/app/services/profile.service';
 
 @Component({
@@ -16,9 +17,12 @@ export class ProfileComponent implements OnInit {
   backendUrl = BACKEND_URL;
   followers: FollowUser[] | null = null;
   following: FollowUser[] | null = null;
+  userFollowings: Array<FollowUser> | null = null;
+  followed: boolean = false;
   show: string = 'none';
   constructor(
     private profileService: ProfileService,
+    private authService: AuthService,
     private route: ActivatedRoute
   ) {}
   ngOnInit(): void {
@@ -39,6 +43,24 @@ export class ProfileComponent implements OnInit {
       });
     } else {
       this.exist = false;
+    }
+    if (this.authService.authenticationStatus()) {
+      this.profileService.getFollowings().subscribe({
+        next: (data) => {
+          this.userFollowings = data.following;
+          if (
+            Array.isArray(this.userFollowings) &&
+            this.userFollowings.some((user) => user.username === username)
+          ) {
+            this.followed = true;
+          } else {
+            this.followed = false;
+          }
+        },
+        error: (error) => {
+          console.log(error);
+        },
+      });
     }
   }
   getFollowersFollowing() {
@@ -65,5 +87,47 @@ export class ProfileComponent implements OnInit {
       this.getFollowersFollowing();
     }
     this.show = 'following';
+  }
+  follow() {
+    if (this.authService.isAuthenticated()) {
+      if (this.user) {
+        this.profileService.follow(this.user.username).subscribe({
+          next: (data) => {
+            if (data.do == 'follow') {
+              if (this.userFollowings) {
+                this.userFollowings.push(data.user);
+              }
+              if (this.followers) {
+                this.followers.push(data.user);
+              }
+
+              if (this.user) {
+                this.user.followers++;
+              }
+              this.followed = true;
+            } else {
+              if (this.userFollowings) {
+                this.userFollowings = this.userFollowings.filter(
+                  (user) => user.username !== data.user.username
+                );
+                if (this.followers) {
+                  this.followers = this.followers.filter(
+                    (user) => user.username !== data.user.username
+                  );
+                }
+              }
+              if (this.user && this.user.followers > 0) {
+                this.user.followers--;
+              }
+              this.followed = false;
+            }
+          },
+
+          error: (error) => {
+            console.log(error);
+          },
+        });
+      }
+    }
   }
 }

@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from user.models import User  # Import your User model here
 
-class UserSerializer(serializers.ModelSerializer):
+class UserSerializers(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['username', 'name', 'profile_pic']
@@ -10,8 +10,8 @@ class FollowersFollowingSerializer(serializers.Serializer):
     """
     Serializer for retrieving a user's followers and following.
     """
-    followers = UserSerializer(many=True)
-    following = UserSerializer(many=True)
+    followers = UserSerializers(many=True)
+    following = UserSerializers(many=True)
 
     def create(self, validated_data):
         # followers_data = validated_data.pop('followers')
@@ -26,6 +26,18 @@ class FollowersFollowingSerializer(serializers.Serializer):
         # instance.following = validated_data.get('following', instance.following)
         # instance.save()
         # return instance
+        ...
+
+class FollowingSerializer(serializers.Serializer):
+    """
+    Serializer for retrieving a user's followers and following.
+    """
+    following = UserSerializers(many=True)
+
+    def create(self, validated_data):
+        ...
+
+    def update(self, instance, validated_data):
         ...
 
     

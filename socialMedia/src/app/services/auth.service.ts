@@ -17,7 +17,7 @@ export class AuthService {
   ) {}
   // Check whether the user is authenticated or if not redirect to the login page
   isAuthenticated(): boolean {
-    if (this.cookieService.check('access_token')) {
+    if (this.validateTokens(this.getTokens())) {
       return true;
     } else {
       this.router.navigateByUrl('/auth/login');
@@ -26,15 +26,38 @@ export class AuthService {
   }
 
   authenticationStatus(): boolean {
-    return this.cookieService.check('access_token');
+    if (this.validateTokens(this.getTokens())) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  validateTokens(tokens: Tokens): boolean {
+    if (!tokens || !tokens.access || !tokens.refresh) {
+      return false;
+    }
+    try {
+      const payload_a = tokens.access.split('.')[1];
+      atob(payload_a);
+      const payload_r = tokens.refresh.split('.')[1];
+      atob(payload_r);
+    } catch (error) {
+      this.logout();
+      return false;
+    }
+    return true;
   }
 
   getTokenUser(): TokenUser {
-    const token = this.cookieService.get('access_token');
-    const payload = token.split('.')[1];
-    const decodedPayload = atob(payload);
-    const user: TokenUser = JSON.parse(decodedPayload);
-    return user;
+    if (this.isAuthenticated()) {
+      const token = this.cookieService.get('access_token');
+      const payload = token.split('.')[1];
+      const decodedPayload = atob(payload);
+      const user: TokenUser = JSON.parse(decodedPayload);
+      return user;
+    }
+    return {} as TokenUser;
   }
 
   getTokens(): Tokens {
@@ -52,23 +75,25 @@ export class AuthService {
   }
 
   setTokens(tokens: Tokens): void {
-    const storedAccess = this.cookieService.get('access_token');
-    const storedRefresh = this.cookieService.get('refresh_token');
-    if (storedAccess !== tokens.access) {
-      const expirationDate = new Date();
-      expirationDate.setDate(expirationDate.getDate() + 90);
-      this.cookieService.set('access_token', tokens.access, {
-        expires: expirationDate,
-        path: '/',
-      });
-    }
-    if (storedRefresh !== tokens.refresh) {
-      const expirationDate = new Date();
-      expirationDate.setDate(expirationDate.getDate() + 90);
-      this.cookieService.set('refresh_token', tokens.refresh, {
-        expires: expirationDate,
-        path: '/',
-      });
+    if (this.validateTokens(tokens)) {
+      const storedAccess = this.cookieService.get('access_token');
+      const storedRefresh = this.cookieService.get('refresh_token');
+      if (storedAccess !== tokens.access) {
+        const expirationDate = new Date();
+        expirationDate.setDate(expirationDate.getDate() + 90);
+        this.cookieService.set('access_token', tokens.access, {
+          expires: expirationDate,
+          path: '/',
+        });
+      }
+      if (storedRefresh !== tokens.refresh) {
+        const expirationDate = new Date();
+        expirationDate.setDate(expirationDate.getDate() + 90);
+        this.cookieService.set('refresh_token', tokens.refresh, {
+          expires: expirationDate,
+          path: '/',
+        });
+      }
     }
   }
 
@@ -111,6 +136,11 @@ export class AuthService {
     this.cookieService.delete('access_token', '/');
     this.cookieService.delete('refresh_token', '/');
     this.router.navigateByUrl('/auth/login');
+  }
+
+  logout() {
+    alert('Token expired. Login again.');
+    this.logOut();
   }
 
   deleteAccount() {
@@ -197,7 +227,6 @@ export class AuthService {
 
       response.subscribe({
         next: (data) => {
-          this.refreshToken();
           this.router.navigateByUrl('');
         },
         error: (error) => {
