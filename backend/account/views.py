@@ -63,7 +63,10 @@ def follow(request):
         return Response({'error': 'User does not exist.'}, status=status.HTTP_404_NOT_FOUND)
     
     serializer = UserSerializers(user)
-    if user_to_follow in user.following.all():
+    
+    if user_to_follow == user:
+        return Response({'do': 'unfollow', 'user': serializer.data}, status=status.HTTP_200_OK)
+    elif user_to_follow in user.following.all():
         user.following.remove(user_to_follow)
         user_to_follow.followers.remove(user)
         return Response({'do': 'unfollow', 'user': serializer.data}, status=status.HTTP_200_OK)
