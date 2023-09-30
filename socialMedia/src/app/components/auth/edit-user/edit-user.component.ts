@@ -30,7 +30,7 @@ export class EditUserComponent implements OnInit {
 
   ngOnInit(): void {
     // Fetch user data when the component is initialized
-    this.authService.getUser().subscribe({
+    this.authService.fetchUser().subscribe({
       next: (data) => {
         const { profile_pic, ...userData } = data;
 

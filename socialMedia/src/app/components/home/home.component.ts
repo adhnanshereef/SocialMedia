@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { BACKEND_URL } from 'src/app/config';
 import { TokenUser, User } from 'src/app/interfaces/auth';
 import { AuthService } from 'src/app/services/auth.service';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-home',
@@ -12,21 +13,25 @@ export class HomeComponent implements OnInit {
   Tuser: TokenUser = {} as TokenUser;
   user: User = {} as User;
   backend_url = BACKEND_URL;
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private userService: UserService
+  ) {}
 
   ngOnInit() {
     this.Tuser = this.authService.getTokenUser();
 
-      this.authService.getUser().subscribe({
-        next: (data) => {
-          this.user = data;
-        },
-        error: (error) => {
-          console.log(error);
-        },
-      });
+    this.authService.fetchUser().subscribe({
+      next: (data) => {
+        this.user = data;
+        this.userService.updateUser(data);
+      },
+      error: (error) => {
+        console.log(error);
+      },
+    });
   }
-
+  
   logout() {
     this.authService.logOut();
   }
