@@ -5,12 +5,27 @@
             <span>Social Media</span>
         </a>
         <span class="nav-bar-spacer"></span>
-        <button (click)="logout()">
-            <mat-icon class="nav-bar-icon" aria-hidden="false" aria-label="Logout icon">logout</mat-icon>
-        </button>
-        <a routerLink="/auth/edit">
-            <mat-icon class="nav-bar-icon" aria-hidden="false" aria-label="Edit icon">edit</mat-icon>
-        </a>
+        <div *ngIf="loaded">
+            <div *ngIf="user" style="display: flex;flex-direction: row;align-items: center;">
+                <button (click)="logout()">
+                    <mat-icon class="nav-bar-icon" aria-hidden="false" aria-label="Logout icon">logout</mat-icon>
+                </button>
+                <a routerLink="/auth/edit">
+                    <mat-icon class="nav-bar-icon" aria-hidden="false" aria-label="Edit icon">edit</mat-icon>
+                </a>
+                <a [routerLink]="'/'+user.username">
+                    <img src="{{backend_url}}{{user.profile_pic}}" style="border-radius: 50%;" width="40px" alt="">
+                </a>
+            </div>
+            <div *ngIf="!user">
+                <a routerLink="/auth/login">
+                    <mat-icon class="nav-bar-icon" aria-hidden="false" aria-label="Login icon">login</mat-icon>
+                </a>
+                <a routerLink="/auth/signup">
+                    <mat-icon class="nav-bar-icon" aria-hidden="false" aria-label="Register icon">person_add</mat-icon>
+                </a>
+            </div>
+        </div>
     </mat-toolbar-row>
 </mat-toolbar>
 

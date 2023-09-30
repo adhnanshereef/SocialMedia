@@ -5,6 +5,7 @@ import { EditUser, TokenUser, Tokens, User } from '../interfaces/auth';
 import { Observable, from } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { BACKEND_URL } from '../config';
+import { UserService } from './user.service';
 
 @Injectable({
   providedIn: 'root',
@@ -13,8 +14,10 @@ export class AuthService {
   constructor(
     private cookieService: CookieService,
     private router: Router,
-    private http: HttpClient
+    private http: HttpClient,
+    private userService: UserService
   ) {}
+  user: User | undefined;
   // Check whether the user is authenticated or if not redirect to the login page
   isAuthenticated(): boolean {
     if (this.validateTokens(this.getTokens())) {
@@ -34,9 +37,16 @@ export class AuthService {
   }
 
   validateTokens(tokens: Tokens): boolean {
-    if (!tokens || !tokens.access || !tokens.refresh) {
+    if (
+      !tokens ||
+      !tokens.access ||
+      !tokens.refresh ||
+      tokens.access === '' ||
+      tokens.refresh === ''
+    ) {
       return false;
     }
+
     try {
       const payload_a = tokens.access.split('.')[1];
       atob(payload_a);
@@ -124,6 +134,14 @@ export class AuthService {
     response.subscribe({
       next: (tokens) => {
         this.setTokens(tokens);
+        this.fetchUser().subscribe({
+          next: (data) => {
+            this.userService.updateUser(data);
+          },
+          error: (error) => {
+            console.log(error);
+          },
+        });
         this.router.navigateByUrl('');
       },
       error: (error) => {
@@ -133,6 +151,7 @@ export class AuthService {
   }
 
   logOut() {
+    this.userService.updateUser(undefined);
     this.cookieService.delete('access_token', '/');
     this.cookieService.delete('refresh_token', '/');
     this.router.navigateByUrl('/auth/login');
@@ -159,7 +178,7 @@ export class AuthService {
     }
   }
 
-  getUser(): Observable<User> {
+  fetchUser(): Observable<User> {
     return this.http.get(`${BACKEND_URL}/auth/getuser/`) as Observable<User>;
   }
 
@@ -227,6 +246,7 @@ export class AuthService {
 
       response.subscribe({
         next: (data) => {
+          this.userService.updateUser(data);
           this.router.navigateByUrl('');
         },
         error: (error) => {
@@ -236,5 +256,13 @@ export class AuthService {
     } else {
       this.router.navigateByUrl('/auth/login');
     }
+  }
+
+  returnUser(): Observable<User> | undefined {
+    if (this.authenticationStatus()) {
+      return this.http.get<User>(`${BACKEND_URL}/auth/getuser/`);
+    }
+
+    return undefined;
   }
 }

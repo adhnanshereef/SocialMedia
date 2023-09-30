@@ -46,8 +46,6 @@ export class AuthInterceptor implements HttpInterceptor {
       switchMap((tokens: Tokens) => {
         if (this.authService.validateTokens(tokens)) {
           this.authService.setTokens(tokens);
-        }else{
-          this.authService.logout();
         }
         return next.handle(this.addToken(request, tokens.access));
       }),
