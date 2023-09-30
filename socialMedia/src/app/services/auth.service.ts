@@ -116,6 +116,14 @@ export class AuthService {
     response.subscribe({
       next: (tokens) => {
         this.setTokens(tokens);
+        this.fetchUser().subscribe({
+          next: (data) => {
+            this.userService.updateUser(data);
+          },
+          error: (error) => {
+            console.log(error);
+          },
+        });
         this.router.navigateByUrl('');
       },
       error: (error) => {
@@ -211,6 +219,7 @@ export class AuthService {
         },
         error: (error) => {
           console.log(error);
+          this.logout();
         },
       });
     }

@@ -21,17 +21,23 @@ export class HomeComponent implements OnInit {
   ngOnInit() {
     this.Tuser = this.authService.getTokenUser();
 
-    this.authService.fetchUser().subscribe({
+    // this.authService.fetchUser().subscribe({
+    //   next: (data) => {
+    //     this.userService.updateUser(data);
+    //   },
+    //   error: (error) => {
+    //     console.log(error);
+    //   },
+    // });
+    this.userService.user$.subscribe({
       next: (data) => {
-        this.user = data;
-        this.userService.updateUser(data);
-      },
-      error: (error) => {
-        console.log(error);
+        if (data) {
+          this.user = data;
+        }
       },
     });
   }
-  
+
   logout() {
     this.authService.logOut();
   }

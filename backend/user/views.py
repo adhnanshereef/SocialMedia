@@ -85,8 +85,8 @@ def edit(request):
         default_storage.delete(old_profile_pic)
 
     user.save()
-
-    return Response({'success': 'User Updated'}, status=status.HTTP_200_OK)
+    serilizer = UserSerializer(user)
+    return Response(serilizer.data, status=status.HTTP_200_OK)
 
 
 @api_view(['DELETE'])
