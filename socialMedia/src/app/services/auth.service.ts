@@ -191,21 +191,11 @@ export class AuthService {
   }
 
   refreshTokenObservable(): Observable<Tokens> {
-    return from(
-      fetch(`${BACKEND_URL}/auth/token/refresh/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          refresh: this.cookieService.get('refresh_token'),
-        }),
-      })
-        .then((response) => response.json())
-        .then((tokens: Tokens) => {
-          return tokens;
-        })
-    );
+    const refreshToken = this.getRefreshToken();
+
+    return this.http.post(`${BACKEND_URL}/auth/token/refresh/`, {
+      refresh: refreshToken,
+    }) as Observable<Tokens>;
   }
 
   refreshToken() {

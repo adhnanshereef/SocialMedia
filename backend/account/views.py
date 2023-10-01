@@ -1,6 +1,6 @@
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
 from user.models import User
 from user.serializers import UserSerializer
@@ -8,7 +8,6 @@ from .serializers import FollowersFollowingSerializer, FollowingSerializer, User
 
 
 @api_view(['GET'])
-@permission_classes([AllowAny])
 def get_user(request, username):
     # Get the user with the provided username
     try:
@@ -21,7 +20,6 @@ def get_user(request, username):
 
 
 @api_view(['GET'])
-@permission_classes([AllowAny])
 def get_followers_followings(request, username):
     # Get the user with the provided username
     try:
