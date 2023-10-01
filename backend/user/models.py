@@ -6,7 +6,7 @@ import uuid
 from django.conf import settings
 
 
-# To get random name for avatar
+# To get random name for profile picture
 def profile_pic_filename(instance, filename):
     ext = filename.split('.')[-1]
     filename = f'{uuid.uuid4()}.{ext}'
@@ -42,4 +42,5 @@ class User(AbstractBaseUser, PermissionsMixin):
     def delete(self, *args, **kwargs):
         if self.profile_pic.url != settings.MEDIA_URL + 'user.svg':
             self.profile_pic.delete()
+        
         super().delete(*args, **kwargs)
