@@ -5,8 +5,8 @@ from .models import Post, Comment
 
 class PostSerializer(serializers.ModelSerializer):
     user = UserSerializers()
-    likes = serializers.StringRelatedField(many=True)
-    shares = serializers.StringRelatedField(many=True)
+    likes = UserSerializers(many=True)
+    shares = UserSerializers(many=True)
     photo = serializers.SerializerMethodField()
 
     class Meta:

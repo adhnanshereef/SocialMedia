@@ -1,15 +1,15 @@
-export interface FollowUser{
+export interface MiniUser{
     name: string;
     username: string;
     profile_pic: string;
 }
 
 export interface FollowersFollowings{
-    followers: FollowUser[];
-    following: FollowUser[];
+    followers: MiniUser[];
+    following: MiniUser[];
 }
 
 export interface FollowReturn{
     do: string;
-    user: FollowUser;
+    user: MiniUser;
 }

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BACKEND_URL } from 'src/app/config';
 import { User } from 'src/app/interfaces/auth';
-import { FollowUser } from 'src/app/interfaces/profile';
+import { MiniUser } from 'src/app/interfaces/profile';
 import { AuthService } from 'src/app/services/auth.service';
 import { ProfileService } from 'src/app/services/profile.service';
 
@@ -15,9 +15,9 @@ export class ProfileComponent implements OnInit {
   user: User | undefined;
   exist: boolean = true;
   backendUrl = BACKEND_URL;
-  followers: FollowUser[] | null = null;
-  following: FollowUser[] | null = null;
-  userFollowings: Array<FollowUser> | null = null;
+  followers: MiniUser[] | null = null;
+  following: MiniUser[] | null = null;
+  userFollowings: Array<MiniUser> | null = null;
   followed: boolean = false;
   show: string = 'none';
   constructor(
