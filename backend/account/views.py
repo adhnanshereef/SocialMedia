@@ -39,16 +39,21 @@ def get_followers_followings(request, username):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-@api_view(['GET'])
+@api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def get_following(request):
     user = request.user
-    following = user.following.all()
-    data = {
-        'following': following,
-    }
-    serializer = FollowingSerializer(data)
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    user_to_follow = request.data.get('username')
+    try:
+        user_to_follow = User.objects.get(username=user_to_follow)
+    except User.DoesNotExist:
+        return Response(False, status=status.HTTP_200_OK)
+
+    if (user_to_follow in user.following.all()):
+        return Response(True, status=status.HTTP_200_OK)
+    else:
+        return Response(False, status=status.HTTP_200_OK)
+
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -59,9 +64,9 @@ def follow(request):
         user_to_follow = User.objects.get(username=username)
     except User.DoesNotExist:
         return Response({'error': 'User does not exist.'}, status=status.HTTP_404_NOT_FOUND)
-    
+
     serializer = UserSerializers(user)
-    
+
     if user_to_follow == user:
         return Response({'do': 'unfollow', 'user': serializer.data}, status=status.HTTP_200_OK)
     elif user_to_follow in user.following.all():

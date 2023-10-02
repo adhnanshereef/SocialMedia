@@ -24,8 +24,6 @@ export class HomeComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.Tuser = this.authService.getTokenUser();
-
     this.postService.getPosts().subscribe({
       next: (data) => {
         this.posts = data;

@@ -1,12 +1,46 @@
-<h1>Home</h1>
+<div class="container">
+    <div class="profile-card" *ngIf="user">
+        <mat-card class="mat-card">
+            <mat-card-header>
+                <div mat-card-avatar class="profile-pic">
+                    <img [src]="backend_url + user.profile_pic" [alt]="user.name + ' profile picture.'" width="100px"
+                        height="100px">
+                </div>
+                <mat-card-title>{{user.name}}</mat-card-title>
+                <mat-card-subtitle>@{{user.username}}</mat-card-subtitle>
+                <a mat-raised-button [routerLink]="user.username">Profile</a>
+            </mat-card-header>
+            <mat-card-content>
+                <p>{{user.bio}}</p>
+                <div class="stats">
+                    <div class="stat">
+                        <mat-icon>people_alt</mat-icon>
+                        <span>{{user.followers}}</span>
+                        <span>Followers</span>
+                    </div>
+                    <div class="stat">
+                        <mat-icon>person_add_alt_1</mat-icon>
+                        <span>{{user.following}}</span>
+                        <span>Following</span>
+                    </div>
+                    <div class="stat">
+                        <mat-icon>event_note</mat-icon>
+                        <span>Joined</span>
+                        <span>Joined {{user.joined | date }}</span>
+                    </div>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </div>
+    <div class="loading" *ngIf="!user">
+        <div class="loader"></div>
+    </div>
+</div>
 
-<h3>{{Tuser.name}}</h3>
-<h3>{{Tuser.username}}</h3>
-<h3>{{Tuser.profile}}</h3>
-<!-- <img src="{{backend_url}}{{Tuser.profile}}" alt="gg" width="100px" > -->
 
-<button type="button" (click)="logout()">Logout</button>
-<button type="button" (click)="deleteAccount()">Delete</button>
+
+
+
 
 <div *ngIf="loaded" class="posts">
     <h1>Posts</h1>
@@ -21,7 +55,9 @@
         </mat-card-header>
         <mat-card-content>
             <p>Created {{post.created | date}}</p>
-            <h1>{{post.title}}</h1>
+            <a [routerLink]="'post/'+post.id">
+                <h1>{{post.title}}</h1>
+            </a>
             <p>{{post.content}}</p>
             <a [routerLink]="'post/'+ post.id" *ngIf="post.photo" class="post-photo">
                 <img mat-card-image [src]="backend_url + post.photo" alt="{{post.title}}" width="100%">

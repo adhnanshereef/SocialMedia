@@ -1,0 +1,38 @@
+.container {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.post {
+  margin-top: 20px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 5px;
+  background-color: #fff;
+  box-shadow: 0 0 10px #ccc;
+  width: 70%;
+}
+.post a {
+  text-decoration: none;
+}
+
+.post h1 {
+  font-size: 30px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.post .post-header {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: left;
+}
+
+.post .profile-pic {
+  margin-right: 10px;
+}

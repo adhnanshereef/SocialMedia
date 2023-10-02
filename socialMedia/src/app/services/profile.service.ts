@@ -3,7 +3,11 @@ import { HttpClient } from '@angular/common/http';
 import { BACKEND_URL } from '../config';
 import { Observable } from 'rxjs';
 import { User } from '../interfaces/auth';
-import { FollowReturn, MiniUser, FollowersFollowings } from '../interfaces/profile';
+import {
+  FollowReturn,
+  MiniUser,
+  FollowersFollowings,
+} from '../interfaces/profile';
 
 @Injectable({
   providedIn: 'root',
@@ -19,12 +23,15 @@ export class ProfileService {
       `${BACKEND_URL}/i/ff/${username}/`
     );
   }
-  getFollowings(): Observable<{ following: MiniUser[] }> {
-    return this.http.get<{ following: MiniUser[] }>(
-      `${BACKEND_URL}/i/following/`
+  getFollowings(username: string): Observable<boolean> {
+    return this.http.post<boolean>(
+      `${BACKEND_URL}/i/following/`,
+      { username }
     );
   }
   follow(username: string): Observable<FollowReturn> {
-    return this.http.post<FollowReturn>(`${BACKEND_URL}/i/follow/`, { username });
+    return this.http.post<FollowReturn>(`${BACKEND_URL}/i/follow/`, {
+      username,
+    });
   }
 }

@@ -36,6 +36,7 @@ import { DatePipe } from './date.pipe';
 // Interceptor
 import { AuthInterceptor } from './auth.interceptor';
 import { PopupComponent } from './components/popup/popup.component';
+import { PostComponent } from './components/post/post.component';
 
 @NgModule({
   declarations: [
@@ -48,6 +49,7 @@ import { PopupComponent } from './components/popup/popup.component';
     ProfileComponent,
     DatePipe,
     PopupComponent,
+    PostComponent,
   ],
   imports: [
     BrowserModule,

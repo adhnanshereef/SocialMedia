@@ -15,7 +15,7 @@ export class PostService {
       return this.http.get<Post[]>(`${BACKEND_URL}/post/all/`);
   }
 
-  getPost(id: number): Observable<Post> {
+  getPost(id: string): Observable<Post> {
       return this.http.get<Post>(`${BACKEND_URL}/post/${id}/`);
   }
 }

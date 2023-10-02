@@ -5,6 +5,7 @@ import { User } from 'src/app/interfaces/auth';
 import { MiniUser } from 'src/app/interfaces/profile';
 import { AuthService } from 'src/app/services/auth.service';
 import { ProfileService } from 'src/app/services/profile.service';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-profile',
@@ -12,6 +13,7 @@ import { ProfileService } from 'src/app/services/profile.service';
   styleUrls: ['./profile.component.css'],
 })
 export class ProfileComponent implements OnInit {
+  auth_user: User | undefined;
   user: User | undefined;
   exist: boolean = true;
   backendUrl = BACKEND_URL;
@@ -20,49 +22,63 @@ export class ProfileComponent implements OnInit {
   userFollowings: Array<MiniUser> | null = null;
   followed: boolean = false;
   show: string = 'none';
+
   constructor(
     private profileService: ProfileService,
     private authService: AuthService,
+    private userService: UserService,
     private route: ActivatedRoute
   ) {}
+
   ngOnInit(): void {
-    const username = this.route.snapshot.paramMap.get('username');
-    if (username) {
-      this.profileService.getProfile(username).subscribe({
-        next: (data) => {
-          this.user = data;
-          this.exist = true;
-        },
-        error: (error) => {
-          if (error.status === 404) {
-            this.exist = false;
-          } else {
+    this.userService.user$.subscribe({
+      next: (data) => {
+        this.auth_user = data;
+      },
+      error: (error) => {
+        console.log(error);
+      },
+    });
+
+    // Subscribe to changes in the params property of the ActivatedRoute
+    this.route.params.subscribe((params) => {
+      const username = params['username'];
+      this.followers = null;
+      this.following = null;
+      if (username) {
+        this.profileService.getProfile(username).subscribe({
+          next: (data) => {
+            this.user = data;
+            this.exist = true;
+          },
+          error: (error) => {
+            if (error.status === 404) {
+              this.exist = false;
+            } else {
+              console.log(error);
+            }
+          },
+        });
+      } else {
+        this.exist = false;
+      }
+      if (this.authService.authenticationStatus() && username) {
+        this.profileService.getFollowings(username).subscribe({
+          next: (data) => {
+            if (data) {
+              this.followed = true;
+            } else {
+              this.followed = false;
+            }
+          },
+          error: (error) => {
             console.log(error);
-          }
-        },
-      });
-    } else {
-      this.exist = false;
-    }
-    if (this.authService.authenticationStatus()) {
-      this.profileService.getFollowings().subscribe({
-        next: (data) => {
-          this.userFollowings = data.following;
-          if (
-            Array.isArray(this.userFollowings) &&
-            this.userFollowings.some((user) => user.username === username)
-          ) {
-            this.followed = true;
-          } else {
-            this.followed = false;
-          }
-        },
-        error: (error) => {
-          console.log(error);
-        },
-      });
-    }
+          },
+        });
+      }
+    });
   }
+
   getFollowersFollowing() {
     if (this.user) {
       this.profileService.getFollowersFollowings(this.user.username).subscribe({
@@ -76,18 +92,21 @@ export class ProfileComponent implements OnInit {
       });
     }
   }
+
   showFollowers() {
     if (!this.followers) {
       this.getFollowersFollowing();
     }
     this.show = 'followers';
   }
+
   showFollowing() {
     if (!this.following) {
       this.getFollowersFollowing();
     }
     this.show = 'following';
   }
+
   follow() {
     if (this.authService.isAuthenticated()) {
       if (this.user) {
@@ -130,6 +149,7 @@ export class ProfileComponent implements OnInit {
       }
     }
   }
+
   close() {
     this.show = 'none';
   }
