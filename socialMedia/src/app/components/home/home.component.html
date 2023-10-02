@@ -1,3 +1,4 @@
+<!-- User --start -->
 <div class="container">
     <div class="profile-card" *ngIf="user">
         <mat-card class="mat-card">
@@ -36,12 +37,10 @@
         <div class="loader"></div>
     </div>
 </div>
+<!-- User --end -->
 
 
-
-
-
-
+<!-- Posts --start -->
 <div *ngIf="loaded" class="posts">
     <h1>Posts</h1>
     <mat-card *ngFor="let post of posts" class="post">
@@ -64,24 +63,14 @@
             </a>
         </mat-card-content>
         <mat-card-actions>
-            <button mat-button>{{post.likes.length}} Likes</button>
-            <button mat-button>{{post.comments}} Comments</button>
-            <button mat-button>{{post.shares.length}} Shares</button>
-            <button mat-button>{{post.views}} Views</button>
+            <button mat-button> <mat-icon>thumb_up_alt</mat-icon> {{post.likes.length}} Likes</button>
+            <button mat-button> <mat-icon>sms</mat-icon> {{post.comments}} Comments</button>
+            <button mat-button> <mat-icon>share</mat-icon> {{post.shares.length}} Shares</button>
+            <button mat-button> <mat-icon>people</mat-icon> {{post.views}} Views</button>
         </mat-card-actions>
     </mat-card>
 </div>
 <div class="loading" *ngIf="!loaded">
     <div class="loader"></div>
 </div>
-
-
-<h2>User from server</h2>
-<h3>{{user.username}}</h3>
-<h3>{{user.name}}</h3>
-<h3>{{user.bio}}</h3>
-<h3>{{user.email}}</h3>
-<h3>{{user.dateofbirth}}</h3>
-<h3>{{user.profile_pic}}</h3>
-
-<img *ngIf="user.profile_pic" src="{{backend_url}}{{user.profile_pic}}" alt="gg" width="100px">
+<!-- Posts --end -->
