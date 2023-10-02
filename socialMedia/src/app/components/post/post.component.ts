@@ -36,4 +36,21 @@ export class PostComponent implements OnInit {
       this.loaded = true;
     }
   }
+  likePost() {
+    if (this.post) {
+      this.postService.likePost(this.post.id.toString()).subscribe({
+        next: (data) => {
+          if (data && this.post) {
+            if (data.do == 'liked') {
+              this.post.likes.push(data.user);
+            } else {
+              this.post.likes = this.post.likes.filter((user) => {
+                return user.username !== data.user.username;
+              });
+            }
+          }
+        },
+      });
+    }
+  }
 }

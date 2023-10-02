@@ -31,7 +31,7 @@ export class HomeComponent implements OnInit {
       },
       error: (error) => {
         console.log(error);
-      }
+      },
     });
     this.userService.user$.subscribe({
       next: (data) => {
@@ -42,11 +42,24 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  logout() {
-    this.authService.logOut();
-  }
-
-  deleteAccount() {
-    this.authService.deleteAccount();
+  likePost(postId: string) {
+    this.postService.likePost(postId).subscribe({
+      next: (data) => {
+        if (data) {
+          this.posts = this.posts.map((post) => {
+            if (post.id === parseInt(postId)) {
+              if (data.do == 'liked') {
+                post.likes.push(data.user);
+              } else {
+                post.likes = post.likes.filter((user) => {
+                  return user.username !== data.user.username;
+                });
+              }
+            }
+            return post;
+          });
+        }
+      },
+    });
   }
 }
