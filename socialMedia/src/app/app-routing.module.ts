@@ -8,6 +8,7 @@ import { authGuard } from './auth.guard';
 import { EditUserComponent } from './components/auth/edit-user/edit-user.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { PostComponent } from './components/post/post.component';
+import { CreatePostComponent } from './components/create-post/create-post.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [authGuard] },
@@ -15,6 +16,7 @@ const routes: Routes = [
   { path: 'auth/login', component: LoginComponent },
   { path: 'auth/edit', component: EditUserComponent, canActivate: [authGuard] },
   { path: ':username', component: ProfileComponent },
+  { path: 'post/create', component: CreatePostComponent, canActivate: [authGuard] },
   { path: 'post/:id', component: PostComponent },
   { path: '**', component: NotFoundComponent }
 ];
