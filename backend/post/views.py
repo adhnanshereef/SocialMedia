@@ -20,13 +20,16 @@ def get_post(request, pk):
         post = Post.objects.get(id=pk)
     except Post.DoesNotExist:
         return Response({'error': 'Post does not exist.'}, status=status.HTTP_404_NOT_FOUND)
+    if request.user.is_authenticated:
+        post.views += 1
+        post.save()
     serializer = PostSerializer(post)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def likePost(request):
+def like_post(request):
     user = request.user
     post_id = request.data.get('id')
     try:
@@ -40,3 +43,27 @@ def likePost(request):
     else:
         post.likes.add(user)
         return Response({'do': 'liked', 'user': serializer}, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_post(request):
+    user = request.user
+    title = request.data.get('title')
+    content = request.data.get('content')
+    photo = request.data.get('photo')
+    if title and len(title) > 100:
+        return Response({'error': 'Title length cannot exceed 100 characters.'}, status=status.HTTP_400_BAD_REQUEST)
+    if title and content and photo:
+        post = Post.objects.create(user=user, title=title, content=content, photo=photo)
+        post.save()
+        serializer = PostSerializer(post)
+        pk = str(serializer.data['id'])
+        return Response(pk, status=status.HTTP_201_CREATED)
+    elif title and content:
+        post = Post.objects.create(user=user, title=title, content=content)
+        post.save()
+        serializer = PostSerializer(post)
+        pk = str(serializer.data['id'])
+        return Response(pk, status=status.HTTP_201_CREATED)
+    else:
+        return Response({'error': 'Title and content are required.'}, status=status.HTTP_400_BAD_REQUEST)

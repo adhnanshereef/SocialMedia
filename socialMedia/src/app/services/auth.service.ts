@@ -252,8 +252,6 @@ export class AuthService {
           console.log(error);
         },
       });
-    } else {
-      this.router.navigateByUrl('/auth/login');
     }
   }
 

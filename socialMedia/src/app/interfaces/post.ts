@@ -13,6 +13,12 @@ export interface Post {
   views: number;
 }
 
+export interface CreatePost {
+  title: string;
+  content: string;
+  photo: string;
+}
+
 export interface Comment{
     id: number;
     content: string;
