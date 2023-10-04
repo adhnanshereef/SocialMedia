@@ -44,6 +44,7 @@ def like_post(request):
         post.likes.add(user)
         return Response({'do': 'liked', 'user': serializer}, status=status.HTTP_200_OK)
 
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def create_post(request):
@@ -54,7 +55,8 @@ def create_post(request):
     if title and len(title) > 100:
         return Response({'error': 'Title length cannot exceed 100 characters.'}, status=status.HTTP_400_BAD_REQUEST)
     if title and content and photo:
-        post = Post.objects.create(user=user, title=title, content=content, photo=photo)
+        post = Post.objects.create(
+            user=user, title=title, content=content, photo=photo)
         post.save()
         serializer = PostSerializer(post)
         pk = str(serializer.data['id'])
@@ -67,3 +69,17 @@ def create_post(request):
         return Response(pk, status=status.HTTP_201_CREATED)
     else:
         return Response({'error': 'Title and content are required.'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_post(request, pk):
+    try:
+        post = Post.objects.get(id=pk)
+    except Post.DoesNotExist:
+        return Response({'error': 'Post does not exist.'}, status=status.HTTP_404_NOT_FOUND)
+    if request.user == post.user:
+        post.delete()
+        return Response(True, status=status.HTTP_200_OK)
+    else:
+        return Response(False, status=status.HTTP_200_OK)

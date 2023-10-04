@@ -11,7 +11,11 @@ import { Router } from '@angular/router';
   providedIn: 'root',
 })
 export class PostService {
-  constructor(private http: HttpClient, private authService: AuthService, private router: Router) {}
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
   getPosts(): Observable<Post[]> {
     return this.http.get<Post[]>(`${BACKEND_URL}/post/all/`);
@@ -53,6 +57,30 @@ export class PostService {
         },
         error: (error) => {
           console.log(error);
+        },
+      });
+    }
+  }
+
+  deletePost(postId: string) {
+    if (this.authService.isAuthenticated()) {
+      const id = parseInt(postId);
+      const response = this.http.delete(`${BACKEND_URL}/post/${id}/delete/`);
+      response.subscribe({
+        next: (data) => {
+          if (data) {
+            alert('Post deleted successfully');
+            if (this.router.url === '/') {
+              window.location.reload();
+            } else {
+              this.router.navigateByUrl('/');
+            }
+          } else {
+            alert('You are not authorized to delete this post');
+          }
+        },
+        error: (error) => {
+          alert(error.error)
         },
       });
     }

@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BACKEND_URL } from 'src/app/config';
+import { User } from 'src/app/interfaces/auth';
 import { Post } from 'src/app/interfaces/post';
 import { PostService } from 'src/app/services/post.service';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-post',
@@ -12,9 +14,11 @@ import { PostService } from 'src/app/services/post.service';
 export class PostComponent implements OnInit {
   post: Post | undefined;
   loaded: boolean = false;
+  user: User | undefined;
   backend_url = BACKEND_URL;
   constructor(
     private postService: PostService,
+    private userService: UserService,
     private route: ActivatedRoute
   ) {}
   ngOnInit(): void {
@@ -35,6 +39,11 @@ export class PostComponent implements OnInit {
     } else {
       this.loaded = true;
     }
+    this.userService.user$.subscribe({
+      next: (data) => {
+        this.user = data;
+      },
+    });
   }
   likePost() {
     if (this.post) {
@@ -51,6 +60,11 @@ export class PostComponent implements OnInit {
           }
         },
       });
+    }
+  }
+  deletePost() {
+    if (this.post) {
+      this.postService.deletePost(this.post.id.toString())
     }
   }
 }

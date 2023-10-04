@@ -22,11 +22,12 @@
             <button mat-button> <mat-icon>sms</mat-icon> {{post.comments}} Comments</button>
             <button mat-button> <mat-icon>share</mat-icon> {{post.shares.length}} Shares</button>
             <button mat-button> <mat-icon>people</mat-icon> {{post.views}} Views</button>
+            <button mat-button *ngIf="user?.username == post.user.username" (click)="deletePost()" > <mat-icon>delete</mat-icon> Delete </button>
         </mat-card-actions>
     </mat-card>
-    <div *ngIf="!post">
-        <h1>No Post Found!</h1>
-    </div>
+    <div *ngIf=" !post">
+                <h1>No Post Found!</h1>
+</div>
 </div>
 <div class="loading" *ngIf="!loaded">
     <div class="loader"></div>

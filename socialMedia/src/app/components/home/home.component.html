@@ -4,8 +4,8 @@
         <mat-card class="mat-card">
             <mat-card-header>
                 <div mat-card-avatar class="profile-pic">
-                    <img  *ngIf="user.profile_pic" [src]="backend_url + user.profile_pic" [alt]="user.name + ' profile picture.'" width="100px"
-                        height="100px">
+                    <img *ngIf="user.profile_pic" [src]="backend_url + user.profile_pic"
+                        [alt]="user.name + ' profile picture.'" width="100px" height="100px">
                 </div>
                 <mat-card-title>{{user.name}}</mat-card-title>
                 <mat-card-subtitle>@{{user.username}}</mat-card-subtitle>
@@ -63,10 +63,13 @@
             </a>
         </mat-card-content>
         <mat-card-actions>
-            <button mat-button (click)="likePost(post.id.toString())" > <mat-icon>thumb_up_alt</mat-icon> {{post.likes.length}} Likes</button>
+            <button mat-button (click)="likePost(post.id.toString())"> <mat-icon>thumb_up_alt</mat-icon>
+                {{post.likes.length}} Likes</button>
             <button mat-button> <mat-icon>sms</mat-icon> {{post.comments}} Comments</button>
             <button mat-button> <mat-icon>share</mat-icon> {{post.shares.length}} Shares</button>
             <button mat-button> <mat-icon>people</mat-icon> {{post.views}} Views</button>
+            <button mat-button *ngIf="user?.username == post.user.username" (click)="deletePost(post.id)" > <mat-icon>delete</mat-icon> Delete
+            </button>
         </mat-card-actions>
     </mat-card>
 </div>
