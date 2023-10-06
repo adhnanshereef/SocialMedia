@@ -2,7 +2,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
-from .serializers import PostSerializer
+from .serializers import PostSerializer, CommentSerializer
 from account.serializers import UserSerializers
 from .models import Post
 
@@ -80,6 +80,47 @@ def delete_post(request, pk):
         return Response({'error': 'Post does not exist.'}, status=status.HTTP_404_NOT_FOUND)
     if request.user == post.user:
         post.delete()
+        return Response(True, status=status.HTTP_200_OK)
+    else:
+        return Response(False, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_comment(request):
+    user = request.user
+    post_id = request.data.get('id')
+    content = request.data.get('content')
+    try:
+        post = Post.objects.get(id=post_id)
+    except Post.DoesNotExist:
+        return Response({'error': 'Post does not exist.'}, status=status.HTTP_404_NOT_FOUND)
+    if content:
+        comment = post.comments.create(user=user, content=content)
+        serializer = CommentSerializer(comment)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    else:
+        return Response({'error': 'Content is required.'}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+def get_comments(request, pk):
+    try:
+        post = Post.objects.get(id=pk)
+    except Post.DoesNotExist:
+        return Response({'error': 'Post does not exist.'}, status=status.HTTP_404_NOT_FOUND)
+    comments = post.comments.all()
+    serializer = CommentSerializer(comments, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_comment(request, pk):
+    try:
+        comment = Comment.objects.get(id=pk)
+    except Comment.DoesNotExist:
+        return Response({'error': 'Comment does not exist.'}, status=status.HTTP_404_NOT_FOUND)
+    if request.user == comment.user:
+        comment.delete()
         return Response(True, status=status.HTTP_200_OK)
     else:
         return Response(False, status=status.HTTP_200_OK)
