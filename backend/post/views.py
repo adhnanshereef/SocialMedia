@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
 from .serializers import PostSerializer, CommentSerializer
 from account.serializers import UserSerializers
-from .models import Post
+from .models import Post, Comment
 
 
 @api_view(['GET'])
@@ -96,21 +96,26 @@ def create_comment(request):
     except Post.DoesNotExist:
         return Response({'error': 'Post does not exist.'}, status=status.HTTP_404_NOT_FOUND)
     if content:
-        comment = post.comments.create(user=user, content=content)
+        comment = Comment.objects.create(
+            user=user, post=post, content=content)
+        post.comments += 1
+        post.save()
         serializer = CommentSerializer(comment)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     else:
         return Response({'error': 'Content is required.'}, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['GET'])
 def get_comments(request, pk):
     try:
         post = Post.objects.get(id=pk)
-    except Post.DoesNotExist:
+    except (ValueError, Post.DoesNotExist):
         return Response({'error': 'Post does not exist.'}, status=status.HTTP_404_NOT_FOUND)
-    comments = post.comments.all()
+    comments = Comment.objects.filter(post=post)
     serializer = CommentSerializer(comments, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
@@ -120,7 +125,13 @@ def delete_comment(request, pk):
     except Comment.DoesNotExist:
         return Response({'error': 'Comment does not exist.'}, status=status.HTTP_404_NOT_FOUND)
     if request.user == comment.user:
+        post = comment.post
         comment.delete()
+        if (post.comments > 0):
+            post.comments -= 1
+        else:
+            post.comments = 0
+        post.save()
         return Response(True, status=status.HTTP_200_OK)
     else:
         return Response(False, status=status.HTTP_200_OK)

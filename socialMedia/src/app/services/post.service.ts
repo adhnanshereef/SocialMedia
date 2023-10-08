@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AuthService } from './auth.service';
 import { Observable } from 'rxjs';
-import { CreatePost, Post } from '../interfaces/post';
+import { Comment, CreatePost, Post } from '../interfaces/post';
 import { BACKEND_URL } from '../config';
 import { MiniUser } from '../interfaces/profile';
 import { Router } from '@angular/router';
@@ -84,5 +84,30 @@ export class PostService {
         },
       });
     }
+  }
+
+  createComment(postId: string, content: string): Observable<Comment> {
+    if (this.authService.isAuthenticated()) {
+      const id = parseInt(postId);
+      return this.http.post<Comment>(`${BACKEND_URL}/post/comment/create/`, {
+        id,
+        content,
+      });
+    }
+    return {} as Observable<Comment>;
+  }
+
+  getComments(postId: string): Observable<Comment[]> {
+    const id = parseInt(postId);
+    return this.http.get<Comment[]>(`${BACKEND_URL}/post/comments/${id}/`);
+  }
+  deleteComment(commentId: string): Observable<Comment> {
+    if (this.authService.isAuthenticated()) {
+      const id = parseInt(commentId);
+      return this.http.delete<Comment>(
+        `${BACKEND_URL}/post/comment/${id}/delete/`
+      );
+    }
+    return {} as Observable<Comment>;
   }
 }

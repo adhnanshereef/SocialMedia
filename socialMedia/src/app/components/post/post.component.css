@@ -36,3 +36,30 @@
 .post .profile-pic {
   margin-right: 10px;
 }
+
+/* Add Comment */
+.add-comment {
+  margin-top: 30px;
+  width: 70%;
+}
+.add-comment mat-form-field,
+button {
+  width: 100%;
+}
+
+/* Comments --start */
+.comments {
+  margin-top: 30px;
+  width: 70%;
+}
+.comments h1 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 20px;
+  text-align: center;
+}
+.comments mat-card{
+  margin-bottom: 10px;
+}
+/* Comments --end */
