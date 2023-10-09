@@ -10,7 +10,7 @@
                 <mat-card-subtitle>@{{user.username}}</mat-card-subtitle>
                 <button mat-raised-button *ngIf="auth_user?.username != user?.username" (click)="follow()"><span
                         *ngIf="followed">Unfollow</span><span *ngIf="!followed">Follow</span></button>
-                <a mat-raised-button *ngIf="auth_user?.username == user?.username">Settings</a>
+                <a mat-raised-button routerLink="/settings" *ngIf="auth_user?.username == user?.username">Settings</a>
 
             </mat-card-header>
             <mat-card-content>

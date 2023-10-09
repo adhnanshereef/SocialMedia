@@ -38,6 +38,7 @@ import { AuthInterceptor } from './auth.interceptor';
 import { PopupComponent } from './components/popup/popup.component';
 import { PostComponent } from './components/post/post.component';
 import { CreatePostComponent } from './components/create-post/create-post.component';
+import { SettingsComponent } from './components/settings/settings.component';
 
 @NgModule({
   declarations: [
@@ -52,6 +53,7 @@ import { CreatePostComponent } from './components/create-post/create-post.compon
     PopupComponent,
     PostComponent,
     CreatePostComponent,
+    SettingsComponent,
   ],
   imports: [
     BrowserModule,

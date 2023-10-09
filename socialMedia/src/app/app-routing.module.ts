@@ -9,9 +9,11 @@ import { EditUserComponent } from './components/auth/edit-user/edit-user.compone
 import { ProfileComponent } from './components/profile/profile.component';
 import { PostComponent } from './components/post/post.component';
 import { CreatePostComponent } from './components/create-post/create-post.component';
+import { SettingsComponent } from './components/settings/settings.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [authGuard] },
+  { path: 'settings', component: SettingsComponent, canActivate: [authGuard] },
   { path: 'auth/signup', component: SignupComponent },
   { path: 'auth/login', component: LoginComponent },
   { path: 'auth/edit', component: EditUserComponent, canActivate: [authGuard] },
