@@ -30,19 +30,7 @@ export class PostComponent implements OnInit {
       this.postService.getPost(id).subscribe({
         next: (post) => {
           this.post = post;
-          this.postService.getComments(post.id.toString()).subscribe({
-            next: (comments) => {
-              this.comments = comments;
-
-              this.loaded = true;
-            },
-            error: (error) => {
-              if (error.status == 404) {
-                this.loaded = true;
-              }
-              console.log(error);
-            },
-          });
+          this.loaded = true;
         },
         error: (error) => {
           if (error.status == 404) {
@@ -90,15 +78,16 @@ export class PostComponent implements OnInit {
           next: (data) => {
             if (data) {
               this.comments?.push(data);
-              if(this.post){
+              if (this.post) {
                 this.post.comments++;
               }
               this.newComment = '';
+              this.scrollToComments();
             }
           },
           error: (error) => {
             console.log(error);
-          }
+          },
         });
     }
   }
@@ -110,7 +99,7 @@ export class PostComponent implements OnInit {
             this.comments = this.comments?.filter((comment) => {
               return comment.id !== commentId;
             });
-            if(this.post){
+            if (this.post) {
               this.post.comments--;
             }
           }
@@ -124,6 +113,20 @@ export class PostComponent implements OnInit {
   scrollToComments(): void {
     const commentsElement =
       this.elementRef.nativeElement.querySelector('.comments');
-    commentsElement.scrollIntoView({ behavior: 'smooth' });
+    if (this.post && !this.comments) {
+      this.postService.getComments(this.post.id.toString()).subscribe({
+        next: (comments) => {
+          this.comments = comments;
+          if (commentsElement) {
+            commentsElement.scrollIntoView({ behavior: 'smooth' });
+          }
+        },
+        error: (error) => {
+          console.log(error);
+        },
+      });
+    } else {
+      commentsElement.scrollIntoView({ behavior: 'smooth' });
+    }
   }
 }
