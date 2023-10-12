@@ -1,1 +1,12 @@
-<p>settings works!</p>
+<h1>Settings</h1>
+
+<div class="button-container">
+    <!-- Edit user link -->
+    <a mat-raised-button color="primary" routerLink="/auth/edit">Edit User</a>
+
+    <!-- Delete user button -->
+    <button mat-raised-button color="warn" (click)="deleteUser()">Delete User</button>
+
+    <!-- Logout button -->
+    <button mat-raised-button color="accent" (click)="logout()">Logout</button>
+</div>

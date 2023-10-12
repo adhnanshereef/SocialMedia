@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-settings',
@@ -6,5 +7,11 @@ import { Component } from '@angular/core';
   styleUrls: ['./settings.component.css']
 })
 export class SettingsComponent {
-
+  constructor(private authService: AuthService){}
+  logout(){
+    this.authService.logOut();
+  }
+  deleteUser(){
+    this.authService.deleteAccount();
+  }
 }

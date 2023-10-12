@@ -12,7 +12,6 @@ def profile_pic_filename(instance, filename):
     filename = f'{uuid.uuid4()}.{ext}'
     return os.path.join('profile_pic/', filename)
 
-
 class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(
         max_length=50, unique=True, blank=False, null=False)
@@ -38,9 +37,11 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.username
-
+        
     def delete(self, *args, **kwargs):
         if self.profile_pic.url != settings.MEDIA_URL + 'user.svg':
             self.profile_pic.delete()
         
         super().delete(*args, **kwargs)
+    
+

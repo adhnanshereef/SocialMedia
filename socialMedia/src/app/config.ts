@@ -1,1 +1,1 @@
-export const BACKEND_URL = 'https://bug-free-tribble-4959j7qxx5p37vv5-8000.app.github.dev';
+export const BACKEND_URL = 'http://127.0.0.1:8000';
