@@ -1,17 +1,23 @@
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.decorators import api_view, permission_classes
 from .serializers import PostSerializer, CommentSerializer
 from account.serializers import UserSerializers
 from .models import Post, Comment
 
 
+class PostPagination(PageNumberPagination):
+    page_size = 3  # Adjust the number of posts per page as needed
+
 @api_view(['GET'])
 def get_posts(request):
+    paginator = PostPagination()
     posts = Post.objects.all()
-    serializer = PostSerializer(posts, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    result_page = paginator.paginate_queryset(posts, request)
+    serializer = PostSerializer(result_page, many=True)
+    return paginator.get_paginated_response(serializer.data)
 
 
 @api_view(['GET'])
