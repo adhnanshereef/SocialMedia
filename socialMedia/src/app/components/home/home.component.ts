@@ -12,7 +12,7 @@ import { UserService } from 'src/app/services/user.service';
 })
 export class HomeComponent implements OnInit {
   Tuser: TokenUser = {} as TokenUser;
-  user: User = {} as User;
+  user: User|undefined;
   posts: Post[] = [];
   loaded: boolean = false;
   loading: boolean = false;
@@ -25,6 +25,7 @@ export class HomeComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.loading = true;
     this.loadPosts();
     this.userService.user$.subscribe({
       next: (data) => {
@@ -60,14 +61,16 @@ export class HomeComponent implements OnInit {
           this.loaded = true;
           this.loading = false;
           this.page++;
+          console.log(this.loading);
+          
         },
         error: (error) => {
           if (error.status == 404) {
             this.finished = true;
-            this.page--;
             this.loaded = true;
           }
           this.loading = false;
+          console.log(this.loading);
         },
       });
     }

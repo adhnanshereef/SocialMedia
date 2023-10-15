@@ -68,10 +68,14 @@
             <a [routerLink]="'post/'+post.id" mat-button> <mat-icon>sms</mat-icon> {{post.comments}} Comments</a>
             <button mat-button> <mat-icon>share</mat-icon> {{post.shares.length}} Shares</button>
             <button mat-button> <mat-icon>people</mat-icon> {{post.views}} Views</button>
-            <button mat-button *ngIf="user?.username == post.user.username" (click)="deletePost(post.id)" > <mat-icon>delete</mat-icon> Delete
+            <button mat-button *ngIf="user?.username == post.user.username" (click)="deletePost(post.id)">
+                <mat-icon>delete</mat-icon> Delete
             </button>
         </mat-card-actions>
     </mat-card>
+    <div class="loading" *ngIf="!finished">
+        <div class="loader"></div>
+    </div>
 </div>
 <div class="loading" *ngIf="!loaded">
     <div class="loader"></div>
