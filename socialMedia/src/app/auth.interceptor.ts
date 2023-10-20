@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import {
   HttpRequest,
   HttpHandler,
@@ -18,14 +18,21 @@ import {
 } from 'rxjs';
 import { AuthService } from './services/auth.service';
 import { Tokens } from './interfaces/auth';
+import { isPlatformServer } from '@angular/common';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
+  private isServer: boolean;
   isRefreshingToken: boolean = false;
   refreshTokenSubject: BehaviorSubject<string | null> = new BehaviorSubject<
     string | null
   >(null);
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    @Inject(PLATFORM_ID) platformId: Object
+  ) {
+    this.isServer = isPlatformServer(platformId);
+  }
 
   intercept(
     request: HttpRequest<any>,
@@ -35,7 +42,8 @@ export class AuthInterceptor implements HttpInterceptor {
       this.authService.authenticationStatus() &&
       !request.url.endsWith('/auth/token/refresh/') &&
       !request.url.endsWith('/auth/token/') &&
-      !request.url.endsWith('/post/all/')
+      !request.url.endsWith('/post/all/') &&
+      !this.isServer
     ) {
       request = this.addToken(request, this.authService.getAccessToken());
     }
@@ -46,7 +54,8 @@ export class AuthInterceptor implements HttpInterceptor {
           error instanceof HttpErrorResponse &&
           error.status === 401 &&
           this.authService.authenticationStatus() &&
-          !request.url.endsWith('/auth/token/refresh/')
+          !request.url.endsWith('/auth/token/refresh/') &&
+          !this.isServer
         ) {
           return this.handle401Error(request, next);
         } else {

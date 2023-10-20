@@ -1,31 +1,38 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { AuthService } from './auth.service';
 import { Observable } from 'rxjs';
 import { Comment, CreatePost, Post } from '../interfaces/post';
 import { BACKEND_URL } from '../config';
 import { MiniUser } from '../interfaces/profile';
 import { Router } from '@angular/router';
+import { isPlatformServer } from '@angular/common';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PostService {
+  private isServer: boolean;
   constructor(
     private http: HttpClient,
     private authService: AuthService,
-    private router: Router
-  ) {}
+    private router: Router,
+    @Inject(PLATFORM_ID) platformId: Object
+  ) {
+    this.isServer = isPlatformServer(platformId);
+  }
 
   getPosts(page: number): Observable<any> {
     return this.http.get<any>(`${BACKEND_URL}/post/all/?page=${page}`);
   }
-  
 
   getPost(id: string): Observable<Post> {
     return this.http.get<Post>(`${BACKEND_URL}/post/${id}/`);
   }
   likePost(postId: string): Observable<{ do: string; user: MiniUser }> {
+    if (this.isServer) {
+      return {} as Observable<{ do: string; user: MiniUser }>;
+    }
     if (this.authService.isAuthenticated()) {
       const id = parseInt(postId);
       return this.http.post<{ do: string; user: MiniUser }>(
@@ -37,6 +44,9 @@ export class PostService {
   }
 
   createPost(post: CreatePost) {
+    if (this.isServer) {
+      return;
+    }
     if (this.authService.isAuthenticated()) {
       const formData = new FormData();
       if (post.photo) {
@@ -64,6 +74,9 @@ export class PostService {
   }
 
   deletePost(postId: string) {
+    if (this.isServer) {
+      return;
+    }
     if (this.authService.isAuthenticated()) {
       const id = parseInt(postId);
       const response = this.http.delete(`${BACKEND_URL}/post/${id}/delete/`);
@@ -81,13 +94,16 @@ export class PostService {
           }
         },
         error: (error) => {
-          alert(error.error)
+          alert(error.error);
         },
       });
     }
   }
 
   createComment(postId: string, content: string): Observable<Comment> {
+    if (this.isServer) {
+      return {} as Observable<Comment>;
+    }
     if (this.authService.isAuthenticated()) {
       const id = parseInt(postId);
       return this.http.post<Comment>(`${BACKEND_URL}/post/comment/create/`, {
@@ -103,6 +119,9 @@ export class PostService {
     return this.http.get<Comment[]>(`${BACKEND_URL}/post/comments/${id}/`);
   }
   deleteComment(commentId: string): Observable<Comment> {
+    if (this.isServer) {
+      return {} as Observable<Comment>;
+    }
     if (this.authService.isAuthenticated()) {
       const id = parseInt(commentId);
       return this.http.delete<Comment>(

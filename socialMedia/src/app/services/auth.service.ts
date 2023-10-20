@@ -1,25 +1,34 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import { EditUser, TokenUser, Tokens, User } from '../interfaces/auth';
-import { Observable, from } from 'rxjs';
+import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { BACKEND_URL } from '../config';
 import { UserService } from './user.service';
+import { isPlatformServer } from '@angular/common';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
+  private isServer: boolean;
   constructor(
     private cookieService: CookieService,
     private router: Router,
     private http: HttpClient,
-    private userService: UserService
-  ) {}
+    private userService: UserService,
+    @Inject(PLATFORM_ID) platformId: Object
+  ) {
+    this.isServer = isPlatformServer(platformId);
+  }
   user: User | undefined;
   // Check whether the user is authenticated or if not redirect to the login page
   isAuthenticated(): boolean {
+    if (this.isServer) {
+      this.router.navigateByUrl('/auth/login');
+      return false;
+    }
     if (this.validateTokens(this.getTokens())) {
       return true;
     } else {
@@ -29,6 +38,9 @@ export class AuthService {
   }
 
   authenticationStatus(): boolean {
+    if (this.isServer) {
+      return false;
+    }
     if (this.validateTokens(this.getTokens())) {
       return true;
     } else {
@@ -71,20 +83,32 @@ export class AuthService {
   }
 
   getTokens(): Tokens {
+    if (this.isServer) {
+      return {} as Tokens;
+    }
     const access = this.cookieService.get('access_token');
     const refresh = this.cookieService.get('refresh_token');
     return { access, refresh };
   }
 
   getAccessToken(): string {
+    if (this.isServer) {
+      return '';
+    }
     return this.cookieService.get('access_token');
   }
 
   getRefreshToken(): string {
+    if (this.isServer) {
+      return '';
+    }
     return this.cookieService.get('refresh_token');
   }
 
   setTokens(tokens: Tokens): void {
+    if (this.isServer) {
+      return;
+    }
     if (this.validateTokens(tokens)) {
       const storedAccess = this.cookieService.get('access_token');
       const storedRefresh = this.cookieService.get('refresh_token');
@@ -109,6 +133,9 @@ export class AuthService {
 
   // Fetch the tokens from the server
   logIn(username: string, password: string) {
+    if (this.isServer) {
+      return;
+    }
     const response = this.http.post(`${BACKEND_URL}/auth/token/`, {
       username,
       password,
@@ -133,6 +160,9 @@ export class AuthService {
   }
 
   signUp(username: string, name: string, email: string, password: string) {
+    if (this.isServer) {
+      return;
+    }
     const response = this.http.post(`${BACKEND_URL}/auth/signup/`, {
       username,
       name,
@@ -159,6 +189,9 @@ export class AuthService {
   }
 
   logOut() {
+    if (this.isServer) {
+      return;
+    }
     this.userService.updateUser(undefined);
     this.cookieService.delete('access_token', '/');
     this.cookieService.delete('refresh_token', '/');
@@ -166,11 +199,17 @@ export class AuthService {
   }
 
   logout() {
+    if (this.isServer) {
+      return;
+    }
     alert('Token expired. Login again.');
     this.logOut();
   }
 
   deleteAccount() {
+    if (this.isServer) {
+      return;
+    }
     if (this.isAuthenticated()) {
       const response = this.http.delete(
         `${BACKEND_URL}/auth/delete/`
@@ -187,10 +226,16 @@ export class AuthService {
   }
 
   fetchUser(): Observable<User> {
+    if (this.isServer) {
+      return {} as Observable<User>;
+    }
     return this.http.get(`${BACKEND_URL}/auth/getuser/`) as Observable<User>;
   }
 
   refreshTokenObservable(): Observable<Tokens> {
+    if (this.isServer) {
+      return {} as Observable<Tokens>;
+    }
     const refreshToken = this.getRefreshToken();
 
     return this.http.post(`${BACKEND_URL}/auth/token/refresh/`, {
@@ -199,6 +244,9 @@ export class AuthService {
   }
 
   refreshToken() {
+    if (this.isServer) {
+      return;
+    }
     if (this.isAuthenticated()) {
       const response = this.http.post(`${BACKEND_URL}/auth/token/refresh/`, {
         refresh: this.cookieService.get('refresh_token'),
@@ -216,6 +264,9 @@ export class AuthService {
   }
 
   editUser(user: EditUser) {
+    if (this.isServer) {
+      return;
+    }
     if (this.isAuthenticated()) {
       const formData = new FormData();
       if (user.username) {
@@ -256,6 +307,9 @@ export class AuthService {
   }
 
   returnUser(): Observable<User> | undefined {
+    if (this.isServer) {
+      return;
+    }
     if (this.authenticationStatus()) {
       return this.http.get<User>(`${BACKEND_URL}/auth/getuser/`);
     }
