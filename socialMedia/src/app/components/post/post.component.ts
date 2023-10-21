@@ -1,9 +1,10 @@
 import { Component, ElementRef, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { BACKEND_URL } from 'src/app/config';
+import { BACKEND_URL, FRONTEND_URL } from 'src/app/config';
 import { User } from 'src/app/interfaces/auth';
 import { Comment, Post } from 'src/app/interfaces/post';
 import { PostService } from 'src/app/services/post.service';
+import { SeoService } from 'src/app/services/seo.service';
 import { UserService } from 'src/app/services/user.service';
 
 @Component({
@@ -18,11 +19,13 @@ export class PostComponent implements OnInit {
   loaded: boolean = false;
   user: User | undefined;
   backend_url = BACKEND_URL;
+  frontend_url = FRONTEND_URL;
   constructor(
     private elementRef: ElementRef,
     private postService: PostService,
     private userService: UserService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private seoService: SeoService
   ) {}
   ngOnInit(): void {
     let id = this.route.snapshot.paramMap.get('id');
@@ -31,6 +34,11 @@ export class PostComponent implements OnInit {
         next: (post) => {
           this.post = post;
           this.loaded = true;
+          this.seoService.generateTags({
+            title: `${this.post?.title}`,
+            description: `${this.post?.content}`,
+            image: `${this.post?.photo ? this.backend_url+this.post.photo : this.frontend_url+'/assets/logo.png'}`,
+          });
         },
         error: (error) => {
           if (error.status == 404) {

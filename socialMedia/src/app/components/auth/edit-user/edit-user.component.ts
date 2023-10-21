@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Title } from '@angular/platform-browser';
 import { BACKEND_URL } from 'src/app/config';
 import { User } from 'src/app/interfaces/auth';
 import { AuthService } from 'src/app/services/auth.service';
@@ -16,8 +17,10 @@ export class EditUserComponent implements OnInit {
 
   constructor(
     private authService: AuthService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private titleService: Title
   ) {
+    this.titleService.setTitle('Edit User | Social Media');
     this.userForm = this.formBuilder.group({
       username: ['', Validators.required],
       name: ['', Validators.required],

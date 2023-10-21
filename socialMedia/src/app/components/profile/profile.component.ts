@@ -5,6 +5,7 @@ import { User } from 'src/app/interfaces/auth';
 import { MiniUser } from 'src/app/interfaces/profile';
 import { AuthService } from 'src/app/services/auth.service';
 import { ProfileService } from 'src/app/services/profile.service';
+import { SeoService } from 'src/app/services/seo.service';
 import { UserService } from 'src/app/services/user.service';
 
 @Component({
@@ -27,7 +28,8 @@ export class ProfileComponent implements OnInit {
     private profileService: ProfileService,
     private authService: AuthService,
     private userService: UserService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private seoService: SeoService
   ) {}
 
   ngOnInit(): void {
@@ -50,10 +52,19 @@ export class ProfileComponent implements OnInit {
           next: (data) => {
             this.user = data;
             this.exist = true;
+            this.seoService.generateTags({
+              title: `@${this.user?.username} | Social Media`,
+              description: `${this.user?.bio}`,
+              image: `${this.backendUrl}${this.user?.profile_pic}`,
+            });
           },
           error: (error) => {
             if (error.status === 404) {
               this.exist = false;
+              this.seoService.generateTags({
+                title: `User Not Found | Social Media`,
+                description: `The user you are looking for does not exist.`,
+              });
             } else {
               console.log(error);
             }

@@ -1,4 +1,5 @@
 import { Component, OnInit, HostListener } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { BACKEND_URL } from 'src/app/config';
 import { TokenUser, User } from 'src/app/interfaces/auth';
 import { Post } from 'src/app/interfaces/post';
@@ -21,7 +22,8 @@ export class HomeComponent implements OnInit {
   backend_url = BACKEND_URL;
   constructor(
     private userService: UserService,
-    private postService: PostService
+    private postService: PostService,
+    private titleService: Title
   ) {}
 
   ngOnInit() {
@@ -34,6 +36,7 @@ export class HomeComponent implements OnInit {
         }
       },
     });
+    this.titleService.setTitle('Home | Social Media');
   }
 
   @HostListener('window:scroll', ['$event'])
@@ -61,8 +64,6 @@ export class HomeComponent implements OnInit {
           this.loaded = true;
           this.loading = false;
           this.page++;
-          console.log(this.loading);
-          
         },
         error: (error) => {
           if (error.status == 404) {
@@ -70,7 +71,6 @@ export class HomeComponent implements OnInit {
             this.loaded = true;
           }
           this.loading = false;
-          console.log(this.loading);
         },
       });
     }

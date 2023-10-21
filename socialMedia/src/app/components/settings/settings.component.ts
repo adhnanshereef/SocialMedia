@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
@@ -7,7 +8,9 @@ import { AuthService } from 'src/app/services/auth.service';
   styleUrls: ['./settings.component.css']
 })
 export class SettingsComponent {
-  constructor(private authService: AuthService){}
+  constructor(private authService: AuthService, private titleService: Title ){
+    this.titleService.setTitle('Settings | Social Media');
+  }
   logout(){
     this.authService.logOut();
   }

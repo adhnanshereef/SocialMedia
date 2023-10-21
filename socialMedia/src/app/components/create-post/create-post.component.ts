@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Title } from '@angular/platform-browser';
 import { PostService } from 'src/app/services/post.service';
 
 @Component({
@@ -12,8 +13,10 @@ export class CreatePostComponent {
   photoPreview: string | undefined;
   constructor(
     private formBuilder: FormBuilder,
-    private postService: PostService
+    private postService: PostService,
+    private titleService: Title,
   ) {
+    this.titleService.setTitle('Create Post | Social Media');
     this.createPostForm = this.formBuilder.group({
       title: ['', [Validators.required, Validators.minLength(3)]],
       content: [''],

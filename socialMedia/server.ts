@@ -30,6 +30,7 @@ export function app(): express.Express {
 
   const ssrRoutes = [
     '/post/',
+    '/u/',
   ]
 
   // All regular routes use the Universal engine
