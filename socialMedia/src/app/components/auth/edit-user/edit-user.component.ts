@@ -4,6 +4,7 @@ import { Title } from '@angular/platform-browser';
 import { BACKEND_URL } from 'src/app/config';
 import { User } from 'src/app/interfaces/auth';
 import { AuthService } from 'src/app/services/auth.service';
+import { LoaderService } from 'src/app/services/loader.service';
 
 @Component({
   selector: 'app-edit-user',
@@ -18,7 +19,8 @@ export class EditUserComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private formBuilder: FormBuilder,
-    private titleService: Title
+    private titleService: Title,
+    private loaderService: LoaderService
   ) {
     this.titleService.setTitle('Edit User | Social Media');
     this.userForm = this.formBuilder.group({
@@ -74,6 +76,7 @@ export class EditUserComponent implements OnInit {
     
     // Call editUser from AuthService with the user data
     this.authService.editUser(userData);
+    this.loaderService.setLoader(true);
   }
   
   formatDate(date: string): string | null {

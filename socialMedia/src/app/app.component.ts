@@ -11,6 +11,7 @@ import { UserService } from './services/user.service';
 import { BACKEND_URL } from './config';
 import { AlertService } from './services/alert.service';
 import { isPlatformServer } from '@angular/common';
+import { LoaderService } from './services/loader.service';
 
 @Component({
   selector: 'app-root',
@@ -18,6 +19,7 @@ import { isPlatformServer } from '@angular/common';
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent implements OnInit, OnDestroy {
+  loader: boolean = false;
   user: User | undefined = undefined;
   loaded: boolean = false;
   backend_url = BACKEND_URL;
@@ -28,6 +30,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private userService: UserService,
     private alertService: AlertService,
+    private loaderService: LoaderService,
     @Inject(PLATFORM_ID) platformId: Object
   ) {
     this.isServer = isPlatformServer(platformId);
@@ -61,6 +64,11 @@ export class AppComponent implements OnInit, OnDestroy {
       this.user = user;
 
       this.loaded = true;
+    });
+    
+    // Loader.
+    this.loaderService.loader$.subscribe((loader) => {
+      this.loader = loader;
     });
 
     // Alerts.

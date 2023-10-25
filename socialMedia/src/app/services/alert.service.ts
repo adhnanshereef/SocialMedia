@@ -17,13 +17,13 @@ export class AlertService {
   setAlert(message: string, status?: number) {
     if (this.isBrowser) {
       const currentAlerts = this.alertSubject.getValue();
-      const newAlerts = [...currentAlerts, message + ' ' + status];
+      const newAlerts = [...currentAlerts, message];
       if (status === 500) {
         if (!currentAlerts.includes(message)) {
           this.alertSubject.next(newAlerts);
         }
       } else if (status === 0) {
-        if (!currentAlerts.includes(message + ' ' + status)) {
+        if (!currentAlerts.includes(message)) {
           this.alertSubject.next(newAlerts);
         }
       } else if (status === 401) {

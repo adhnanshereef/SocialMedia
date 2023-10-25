@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
+import { LoaderService } from 'src/app/services/loader.service';
 import { PostService } from 'src/app/services/post.service';
 
 @Component({
@@ -15,6 +16,7 @@ export class CreatePostComponent {
     private formBuilder: FormBuilder,
     private postService: PostService,
     private titleService: Title,
+    private loaderService: LoaderService
   ) {
     this.titleService.setTitle('Create Post | Social Media');
     this.createPostForm = this.formBuilder.group({
@@ -44,5 +46,6 @@ export class CreatePostComponent {
     const post = this.createPostForm.value;
 
     this.postService.createPost(post);
+    this.loaderService.setLoader(true);
   }
 }

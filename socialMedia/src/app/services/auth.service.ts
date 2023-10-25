@@ -8,6 +8,7 @@ import { BACKEND_URL } from '../config';
 import { UserService } from './user.service';
 import { isPlatformServer } from '@angular/common';
 import { AlertService } from './alert.service';
+import { LoaderService } from './loader.service';
 
 @Injectable({
   providedIn: 'root',
@@ -20,6 +21,7 @@ export class AuthService {
     private http: HttpClient,
     private userService: UserService,
     private alertService: AlertService,
+    private loaderService: LoaderService,
     @Inject(PLATFORM_ID) platformId: Object
   ) {
     this.isServer = isPlatformServer(platformId);
@@ -153,9 +155,11 @@ export class AuthService {
             console.log(error);
           },
         });
+        this.loaderService.setLoader(false);
         this.router.navigateByUrl('');
       },
       error: (error) => {
+        this.loaderService.setLoader(false);
         if (error.status === 401) {
           this.alertService.setAlert(
             'Invalid Credentials or Account does not exist'
@@ -191,9 +195,11 @@ export class AuthService {
             console.log(error);
           },
         });
+        this.loaderService.setLoader(false);
         this.router.navigateByUrl('');
       },
       error: (error) => {
+        this.loaderService.setLoader(false);
         this.alertService.setAlert(
           'Something went wrong, try again later.',
           error.status
@@ -230,9 +236,11 @@ export class AuthService {
       ) as Observable<any>;
       response.subscribe({
         next: (data) => {
+          this.loaderService.setLoader(false);
           this.logOut();
         },
         error: (error) => {
+          this.loaderService.setLoader(false);
           this.alertService.setAlert(
             'Something went wrong, try again later.',
             error.status
@@ -320,9 +328,11 @@ export class AuthService {
       response.subscribe({
         next: (data) => {
           this.userService.updateUser(data);
+          this.loaderService.setLoader(false);
           this.router.navigateByUrl('');
         },
         error: (error) => {
+          this.loaderService.setLoader(false);
           if (error.status === 400) {
             this.alertService.setAlert('Invalid data');
           } else {

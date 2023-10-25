@@ -8,6 +8,7 @@ import { MiniUser } from '../interfaces/profile';
 import { Router } from '@angular/router';
 import { isPlatformServer } from '@angular/common';
 import { AlertService } from './alert.service';
+import { LoaderService } from './loader.service';
 
 @Injectable({
   providedIn: 'root',
@@ -19,6 +20,7 @@ export class PostService {
     private authService: AuthService,
     private router: Router,
     private alertService: AlertService,
+    private loaderService: LoaderService,
     @Inject(PLATFORM_ID) platformId: Object
   ) {
     this.isServer = isPlatformServer(platformId);
@@ -66,10 +68,15 @@ export class PostService {
       );
       response.subscribe({
         next: (dataId) => {
+          this.loaderService.setLoader(false);
           this.router.navigateByUrl(`/post/${dataId}`);
         },
         error: (error) => {
-          this.alertService.setAlert("Something went wrong, try again later.", error.status)
+          this.loaderService.setLoader(false);
+          this.alertService.setAlert(
+            'Something went wrong, try again later.',
+            error.status
+          );
         },
       });
     }
@@ -96,7 +103,7 @@ export class PostService {
           }
         },
         error: (error) => {
-          this.alertService.setAlert(error.error, error.status)
+          this.alertService.setAlert(error.error, error.status);
         },
       });
     }

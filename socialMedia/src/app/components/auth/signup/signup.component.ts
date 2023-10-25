@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from 'src/app/services/auth.service';
 import { SignupUser } from 'src/app/interfaces/auth';
 import { Title } from '@angular/platform-browser';
+import { LoaderService } from 'src/app/services/loader.service';
 
 @Component({
   selector: 'app-signup',
@@ -16,7 +17,8 @@ export class SignupComponent implements OnInit {
     private formBuilder: FormBuilder,
     private authService: AuthService,
     private router: Router,
-    private titleService: Title
+    private titleService: Title,
+    private loaderService: LoaderService
   ) {}
 
   ngOnInit(): void {
@@ -40,5 +42,6 @@ export class SignupComponent implements OnInit {
       signupData.email,
       signupData.password
     );
+    this.loaderService.setLoader(true);
   }
 }

@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from 'src/app/services/auth.service';
 import { LoginUser } from 'src/app/interfaces/auth';
 import { Title } from '@angular/platform-browser';
+import { LoaderService } from 'src/app/services/loader.service';
 
 @Component({
   selector: 'app-login',
@@ -16,7 +17,8 @@ export class LoginComponent implements OnInit {
     private formBuilder: FormBuilder,
     private authService: AuthService,
     private router: Router,
-    private titleService: Title
+    private titleService: Title,
+    private loaderService: LoaderService
   ) {}
 
   ngOnInit(): void {
@@ -33,5 +35,6 @@ export class LoginComponent implements OnInit {
   onSubmit() {
     const loginData: LoginUser = this.loginForm.value;
     this.authService.logIn(loginData.username, loginData.password);
+    this.loaderService.setLoader(true);
   }
 }
