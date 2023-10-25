@@ -7,6 +7,7 @@ import { HttpClient } from '@angular/common/http';
 import { BACKEND_URL } from '../config';
 import { UserService } from './user.service';
 import { isPlatformServer } from '@angular/common';
+import { AlertService } from './alert.service';
 
 @Injectable({
   providedIn: 'root',
@@ -18,6 +19,7 @@ export class AuthService {
     private router: Router,
     private http: HttpClient,
     private userService: UserService,
+    private alertService: AlertService,
     @Inject(PLATFORM_ID) platformId: Object
   ) {
     this.isServer = isPlatformServer(platformId);
@@ -154,7 +156,16 @@ export class AuthService {
         this.router.navigateByUrl('');
       },
       error: (error) => {
-        console.log(error);
+        if (error.status === 401) {
+          this.alertService.setAlert(
+            'Invalid Credentials or Account does not exist'
+          );
+        } else {
+          this.alertService.setAlert(
+            'Something went wrong, try again later.',
+            error.status
+          );
+        }
       },
     });
   }
@@ -183,7 +194,10 @@ export class AuthService {
         this.router.navigateByUrl('');
       },
       error: (error) => {
-        console.log(error);
+        this.alertService.setAlert(
+          'Something went wrong, try again later.',
+          error.status
+        );
       },
     });
   }
@@ -219,7 +233,10 @@ export class AuthService {
           this.logOut();
         },
         error: (error) => {
-          console.log(error);
+          this.alertService.setAlert(
+            'Something went wrong, try again later.',
+            error.status
+          );
         },
       });
     }
@@ -256,8 +273,14 @@ export class AuthService {
           this.setTokens(tokens);
         },
         error: (error) => {
-          console.log(error);
-          this.logout();
+          if (error.status === 401) {
+            this.logout();
+          } else {
+            this.alertService.setAlert(
+              'Something went wrong, try again later.',
+              error.status
+            );
+          }
         },
       });
     }
@@ -300,7 +323,14 @@ export class AuthService {
           this.router.navigateByUrl('');
         },
         error: (error) => {
-          console.log(error);
+          if (error.status === 400) {
+            this.alertService.setAlert('Invalid data');
+          } else {
+            this.alertService.setAlert(
+              'Something went wrong, try again later.',
+              error.status
+            );
+          }
         },
       });
     }

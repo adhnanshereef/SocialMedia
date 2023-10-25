@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { BACKEND_URL } from 'src/app/config';
 import { User } from 'src/app/interfaces/auth';
 import { MiniUser } from 'src/app/interfaces/profile';
+import { AlertService } from 'src/app/services/alert.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { ProfileService } from 'src/app/services/profile.service';
 import { SeoService } from 'src/app/services/seo.service';
@@ -29,7 +30,8 @@ export class ProfileComponent implements OnInit {
     private authService: AuthService,
     private userService: UserService,
     private route: ActivatedRoute,
-    private seoService: SeoService
+    private seoService: SeoService,
+    private alertService: AlertService
   ) {}
 
   ngOnInit(): void {
@@ -66,7 +68,10 @@ export class ProfileComponent implements OnInit {
                 description: `The user you are looking for does not exist.`,
               });
             } else {
-              console.log(error);
+              this.alertService.setAlert(
+                'Something went wrong, try again later.',
+                error.status
+              );
             }
           },
         });
@@ -83,7 +88,10 @@ export class ProfileComponent implements OnInit {
             }
           },
           error: (error) => {
-            console.log(error);
+            this.alertService.setAlert(
+              'Something went wrong, try again later.',
+              error.status
+            );
           },
         });
       }
@@ -98,7 +106,10 @@ export class ProfileComponent implements OnInit {
           this.following = data.following;
         },
         error: (error) => {
-          console.log(error);
+          this.alertService.setAlert(
+            'Something went wrong, try again later.',
+            error.status
+          );
         },
       });
     }
@@ -154,7 +165,10 @@ export class ProfileComponent implements OnInit {
           },
 
           error: (error) => {
-            console.log(error);
+            this.alertService.setAlert(
+              'Something went wrong, try again later.',
+              error.status
+            );
           },
         });
       }

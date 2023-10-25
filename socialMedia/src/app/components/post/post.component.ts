@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { BACKEND_URL, FRONTEND_URL } from 'src/app/config';
 import { User } from 'src/app/interfaces/auth';
 import { Comment, Post } from 'src/app/interfaces/post';
+import { AlertService } from 'src/app/services/alert.service';
 import { PostService } from 'src/app/services/post.service';
 import { SeoService } from 'src/app/services/seo.service';
 import { UserService } from 'src/app/services/user.service';
@@ -25,7 +26,8 @@ export class PostComponent implements OnInit {
     private postService: PostService,
     private userService: UserService,
     private route: ActivatedRoute,
-    private seoService: SeoService
+    private seoService: SeoService,
+    private alertService: AlertService
   ) {}
   ngOnInit(): void {
     let id = this.route.snapshot.paramMap.get('id');
@@ -37,14 +39,22 @@ export class PostComponent implements OnInit {
           this.seoService.generateTags({
             title: `${this.post?.title}`,
             description: `${this.post?.content}`,
-            image: `${this.post?.photo ? this.backend_url+this.post.photo : this.frontend_url+'/assets/logo.png'}`,
+            image: `${
+              this.post?.photo
+                ? this.backend_url + this.post.photo
+                : this.frontend_url + '/assets/logo.png'
+            }`,
           });
         },
         error: (error) => {
           if (error.status == 404) {
             this.loaded = true;
+          } else {
+            this.alertService.setAlert(
+              'Something went wrong, try again later.',
+              error.status
+            );
           }
-          console.log(error);
         },
       });
     } else {
@@ -70,6 +80,12 @@ export class PostComponent implements OnInit {
             }
           }
         },
+        error: (error) => {
+          this.alertService.setAlert(
+            'Something went wrong, try again later.',
+            error.status
+          );
+        },
       });
     }
   }
@@ -94,7 +110,10 @@ export class PostComponent implements OnInit {
             }
           },
           error: (error) => {
-            console.log(error);
+            this.alertService.setAlert(
+              'Something went wrong, try again later.',
+              error.status
+            );
           },
         });
     }
@@ -113,7 +132,10 @@ export class PostComponent implements OnInit {
           }
         },
         error: (error) => {
-          console.log(error);
+          this.alertService.setAlert(
+            'Something went wrong, try again later.',
+            error.status
+          );
         },
       });
     }
@@ -130,7 +152,10 @@ export class PostComponent implements OnInit {
           }
         },
         error: (error) => {
-          console.log(error);
+          this.alertService.setAlert(
+            'Something went wrong, try again later.',
+            error.status
+          );
         },
       });
     } else {

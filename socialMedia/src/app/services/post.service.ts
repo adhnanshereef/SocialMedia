@@ -7,6 +7,7 @@ import { BACKEND_URL } from '../config';
 import { MiniUser } from '../interfaces/profile';
 import { Router } from '@angular/router';
 import { isPlatformServer } from '@angular/common';
+import { AlertService } from './alert.service';
 
 @Injectable({
   providedIn: 'root',
@@ -17,6 +18,7 @@ export class PostService {
     private http: HttpClient,
     private authService: AuthService,
     private router: Router,
+    private alertService: AlertService,
     @Inject(PLATFORM_ID) platformId: Object
   ) {
     this.isServer = isPlatformServer(platformId);
@@ -67,7 +69,7 @@ export class PostService {
           this.router.navigateByUrl(`/post/${dataId}`);
         },
         error: (error) => {
-          console.log(error);
+          this.alertService.setAlert("Something went wrong, try again later.", error.status)
         },
       });
     }
@@ -94,7 +96,7 @@ export class PostService {
           }
         },
         error: (error) => {
-          alert(error.error);
+          this.alertService.setAlert(error.error, error.status)
         },
       });
     }

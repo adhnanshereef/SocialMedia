@@ -3,6 +3,7 @@ import { Title } from '@angular/platform-browser';
 import { BACKEND_URL } from 'src/app/config';
 import { TokenUser, User } from 'src/app/interfaces/auth';
 import { Post } from 'src/app/interfaces/post';
+import { AlertService } from 'src/app/services/alert.service';
 import { PostService } from 'src/app/services/post.service';
 import { UserService } from 'src/app/services/user.service';
 
@@ -23,7 +24,8 @@ export class HomeComponent implements OnInit {
   constructor(
     private userService: UserService,
     private postService: PostService,
-    private titleService: Title
+    private titleService: Title,
+    private alertService: AlertService
   ) {}
 
   ngOnInit() {
@@ -66,11 +68,15 @@ export class HomeComponent implements OnInit {
           this.page++;
         },
         error: (error) => {
+          this.loading = false;
           if (error.status == 404) {
             this.finished = true;
             this.loaded = true;
+          }else{
+            this.finished = true;
+            this.loaded = true;
+            this.alertService.setAlert('Something went wrong, try again later.', error.status);
           }
-          this.loading = false;
         },
       });
     }
@@ -93,6 +99,9 @@ export class HomeComponent implements OnInit {
             return post;
           });
         }
+      },
+      error: (error) => {
+        this.alertService.setAlert('Something went wrong, try again later.', error.status);
       },
     });
   }

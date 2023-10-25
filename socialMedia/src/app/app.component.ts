@@ -44,10 +44,12 @@ export class AppComponent implements OnInit, OnDestroy {
             this.userService.updateUser(data);
           },
           error: (error) => {
-            this.alertService.setAlert(
-              'Something went wrong, try again later.',
-              error.status
-            );
+            if (error.status !== 401) {
+              this.alertService.setAlert(
+                'Something went wrong, try again later.',
+                error.status
+              );
+            }
           },
         });
       } else {
