@@ -22,7 +22,7 @@ export class ProfileService {
   }
 
   getProfile(username: string): Observable<User> {
-    return this.http.get<User>(`${BACKEND_URL}/i/users/${username}`);
+    return this.http.get<User>(`${BACKEND_URL}/i/users/${username}/`);
   }
   getFollowersFollowings(username: string): Observable<FollowersFollowings> {
     return this.http.get<FollowersFollowings>(

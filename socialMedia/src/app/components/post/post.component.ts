@@ -20,7 +20,6 @@ export class PostComponent implements OnInit {
   loaded: boolean = false;
   user: User | undefined;
   backend_url = BACKEND_URL;
-  frontend_url = FRONTEND_URL;
   constructor(
     private elementRef: ElementRef,
     private postService: PostService,
@@ -42,7 +41,7 @@ export class PostComponent implements OnInit {
             image: `${
               this.post?.photo
                 ? this.backend_url + this.post.photo
-                : this.frontend_url + '/assets/logo.png'
+                : FRONTEND_URL + '/assets/logo.png'
             }`,
           });
         },

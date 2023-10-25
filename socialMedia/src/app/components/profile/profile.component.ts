@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { isPlatformServer } from '@angular/common';
+import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BACKEND_URL } from 'src/app/config';
 import { User } from 'src/app/interfaces/auth';
@@ -24,6 +25,7 @@ export class ProfileComponent implements OnInit {
   userFollowings: Array<MiniUser> | null = null;
   followed: boolean = false;
   show: string = 'none';
+  isServer: boolean;
 
   constructor(
     private profileService: ProfileService,
@@ -31,20 +33,20 @@ export class ProfileComponent implements OnInit {
     private userService: UserService,
     private route: ActivatedRoute,
     private seoService: SeoService,
-    private alertService: AlertService
-  ) {}
+    private alertService: AlertService,
+    @Inject(PLATFORM_ID) platformId: Object
+  ) {
+    this.isServer = isPlatformServer(platformId);
+  }
 
   ngOnInit(): void {
     this.userService.user$.subscribe({
       next: (data) => {
         this.auth_user = data;
       },
-      error: (error) => {
-        console.log(error);
-      },
     });
 
-    // Subscribe to changes in the params property of the ActivatedRoute
+    // Subscribe to changes in the params property of the ActivatedRoute and fetch the user from the backend
     this.route.params.subscribe((params) => {
       const username = params['username'];
       this.followers = null;
@@ -78,7 +80,12 @@ export class ProfileComponent implements OnInit {
       } else {
         this.exist = false;
       }
-      if (this.authService.authenticationStatus() && username) {
+
+      if (
+        !this.isServer &&
+        this.authService.authenticationStatus() &&
+        username
+      ) {
         this.profileService.getFollowings(username).subscribe({
           next: (data) => {
             if (data) {
