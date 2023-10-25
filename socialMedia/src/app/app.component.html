@@ -35,3 +35,9 @@
 <main>
     <router-outlet></router-outlet>
 </main>
+
+<div class="alerts">
+    <div *ngFor="let alert of alerts" class="alert" >
+        <span>{{alert}}</span>
+    </div>
+</div>
