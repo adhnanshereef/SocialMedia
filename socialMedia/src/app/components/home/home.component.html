@@ -3,9 +3,9 @@
     <div class="profile-card" *ngIf="user">
         <mat-card class="mat-card">
             <mat-card-header>
-                <div mat-card-avatar class="profile-pic">
+                <div mat-card-avatar class="profile-pic" style="width: 100px;height: 100px;" >
                     <img *ngIf="user.profile_pic" [src]="backend_url + user.profile_pic"
-                        [alt]="user.name + ' profile picture.'" width="100px" height="100px">
+                        [alt]="user.name + ' profile picture.'">
                 </div>
                 <mat-card-title>{{user.name}}</mat-card-title>
                 <mat-card-subtitle>@{{user.username}}</mat-card-subtitle>

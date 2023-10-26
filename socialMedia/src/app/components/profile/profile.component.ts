@@ -1,5 +1,12 @@
 import { isPlatformServer } from '@angular/common';
-import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import {
+  Component,
+  Inject,
+  OnInit,
+  PLATFORM_ID,
+  TransferState,
+  makeStateKey,
+} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BACKEND_URL } from 'src/app/config';
 import { User } from 'src/app/interfaces/auth';
@@ -34,6 +41,7 @@ export class ProfileComponent implements OnInit {
     private route: ActivatedRoute,
     private seoService: SeoService,
     private alertService: AlertService,
+    private transferState: TransferState,
     @Inject(PLATFORM_ID) platformId: Object
   ) {
     this.isServer = isPlatformServer(platformId);
@@ -49,36 +57,26 @@ export class ProfileComponent implements OnInit {
     // Subscribe to changes in the params property of the ActivatedRoute and fetch the user from the backend
     this.route.params.subscribe((params) => {
       const username = params['username'];
-      this.followers = null;
-      this.following = null;
-      if (username) {
-        this.profileService.getProfile(username).subscribe({
-          next: (data) => {
-            this.user = data;
-            this.exist = true;
-            this.seoService.generateTags({
-              title: `@${this.user?.username} | Social Media`,
-              description: `${this.user?.bio}`,
-              image: `${this.backendUrl}${this.user?.profile_pic}`,
-            });
-          },
-          error: (error) => {
-            if (error.status === 404) {
-              this.exist = false;
-              this.seoService.generateTags({
-                title: `User Not Found | Social Media`,
-                description: `The user you are looking for does not exist.`,
-              });
-            } else {
-              this.alertService.setAlert(
-                'Something went wrong, try again later.',
-                error.status
-              );
-            }
-          },
-        });
+
+      if (
+        this.transferState.hasKey(makeStateKey('user')) &&
+        this.transferState.hasKey(makeStateKey('user'))
+      ) {
+        this.exist = this.transferState.get<boolean>(
+          makeStateKey('exist'),
+          false
+        );
+        const transferStateUser = this.transferState.get<User | string>(
+          makeStateKey('user'),
+          ''
+        );
+        if (typeof transferStateUser === 'string') {
+          this.user = undefined;
+        } else {
+          this.user = transferStateUser;
+        }
       } else {
-        this.exist = false;
+        this.fetchProfile(username);
       }
 
       if (
@@ -103,6 +101,52 @@ export class ProfileComponent implements OnInit {
         });
       }
     });
+  }
+
+  fetchProfile(username: string | null) {
+    this.followers = null;
+    this.following = null;
+    if (username) {
+      this.profileService.getProfile(username).subscribe({
+        next: (data) => {
+          if (this.isServer) {
+            this.transferState.set<User | string>(makeStateKey('user'), data);
+            this.transferState.set<boolean>(makeStateKey('exist'), true);
+          }
+          this.user = data;
+          this.exist = true;
+          this.seoService.generateTags({
+            title: `@${this.user?.username} | Social Media`,
+            description: `${this.user?.bio}`,
+            image: `${this.backendUrl}${this.user?.profile_pic}`,
+          });
+        },
+        error: (error) => {
+          if (error.status === 404) {
+            if (this.isServer) {
+              this.transferState.set<User | string>(makeStateKey('user'), '');
+              this.transferState.set<boolean>(makeStateKey('exist'), false);
+            }
+            this.exist = false;
+            this.seoService.generateTags({
+              title: `User Not Found | Social Media`,
+              description: `The user you are looking for does not exist.`,
+            });
+          } else {
+            this.alertService.setAlert(
+              'Something went wrong, try again later.',
+              error.status
+            );
+          }
+        },
+      });
+    } else {
+      if (this.isServer) {
+        this.transferState.set<User | string>(makeStateKey('user'), '');
+        this.transferState.set<boolean>(makeStateKey('exist'), false);
+      }
+      this.exist = false;
+    }
   }
 
   getFollowersFollowing() {

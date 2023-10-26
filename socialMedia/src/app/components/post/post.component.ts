@@ -1,4 +1,13 @@
-import { Component, ElementRef, OnInit } from '@angular/core';
+import { isPlatformServer } from '@angular/common';
+import {
+  Component,
+  ElementRef,
+  Inject,
+  OnInit,
+  PLATFORM_ID,
+  TransferState,
+  makeStateKey,
+} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BACKEND_URL, FRONTEND_URL } from 'src/app/config';
 import { User } from 'src/app/interfaces/auth';
@@ -20,19 +29,61 @@ export class PostComponent implements OnInit {
   loaded: boolean = false;
   user: User | undefined;
   backend_url = BACKEND_URL;
+  isServer: boolean;
   constructor(
     private elementRef: ElementRef,
     private postService: PostService,
     private userService: UserService,
     private route: ActivatedRoute,
     private seoService: SeoService,
-    private alertService: AlertService
-  ) {}
+    private alertService: AlertService,
+    private transferState: TransferState,
+    @Inject(PLATFORM_ID) platformId: Object
+  ) {
+    this.isServer = isPlatformServer(platformId);
+  }
   ngOnInit(): void {
     let id = this.route.snapshot.paramMap.get('id');
+    if (
+      this.transferState.hasKey(makeStateKey('loaded')) &&
+      this.transferState.hasKey(makeStateKey('post'))
+    ) {
+      this.loaded = this.transferState.get<boolean>(
+        makeStateKey('loaded'),
+        false
+      );
+      const transferStatePost = this.transferState.get<Post | string>(
+        makeStateKey('post'),
+        ''
+      );
+      if (typeof transferStatePost === 'string') {
+        this.post = undefined;
+      }else{
+        this.post = transferStatePost;
+      }
+    } else {
+      this.fetchPost(id);
+    }
+    if (!this.isServer) {
+      this.userService.user$.subscribe({
+        next: (data) => {
+          this.user = data;
+        },
+      });
+    }
+  }
+
+  fetchPost(id: string | null) {
     if (id) {
       this.postService.getPost(id).subscribe({
         next: (post) => {
+          if (this.isServer) {
+            this.transferState.set<Post | string>(
+              makeStateKey('post'),
+              post
+            );
+            this.transferState.set<boolean>(makeStateKey('loaded'), true);
+          }
           this.post = post;
           this.loaded = true;
           this.seoService.generateTags({
@@ -47,6 +98,13 @@ export class PostComponent implements OnInit {
         },
         error: (error) => {
           if (error.status == 404) {
+            if (this.isServer) {
+              this.transferState.set<Post | string>(
+                makeStateKey('post'),
+                ""
+              );
+              this.transferState.set<boolean>(makeStateKey('loaded'), true);
+            }
             this.loaded = true;
           } else {
             this.alertService.setAlert(
@@ -57,14 +115,17 @@ export class PostComponent implements OnInit {
         },
       });
     } else {
+      if (this.isServer) {
+        this.transferState.set<Post | string>(
+          makeStateKey('post'),
+          ""
+        );
+        this.transferState.set<boolean>(makeStateKey('loaded'), true);
+      }
       this.loaded = true;
     }
-    this.userService.user$.subscribe({
-      next: (data) => {
-        this.user = data;
-      },
-    });
   }
+
   likePost() {
     if (this.post) {
       this.postService.likePost(this.post.id.toString()).subscribe({
